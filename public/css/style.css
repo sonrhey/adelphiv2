@@ -1,0 +1,13 @@
+.action{
+	width: 65px;
+	height: 32px;
+
+}
+.align-right{
+	float: right;
+}
+.but{
+	margin-top: 10px;
+	margin-left: 20px;
+	width: 140px;
+}
