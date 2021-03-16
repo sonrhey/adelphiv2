@@ -9,7 +9,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title') | {{ env('APP_NAME') }}</title>
-
     <!-- Scripts -->
     <!-- <script src="{{ asset('js/app.js') }}" defer></script> -->
 
@@ -29,6 +28,7 @@
     <link rel="stylesheet" href="{{asset('template_styles/css/default-css.css')}}">
     <link rel="stylesheet" href="{{asset('template_styles/css/styles.css')}}">
     <link rel="stylesheet" href="{{asset('template_styles/css/responsive.css')}}">
+    <link rel="stylesheet" href="{{ asset('css/bootstrap-select.min.css') }}">
     <!-- modernizr css -->
     <script src="{{asset('template_styles/js/vendor/modernizr-2.8.3.min.js')}}"></script>
    
@@ -48,67 +48,6 @@
                 @yield('content')
             </div>
            
-            <!-- <div class="main-content-inner">
-                <div class="sales-report-area mt-5 mb-5">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="single-report mb-xs-30">
-                                <div class="s-report-inner pr--20 pt--30 mb-3">
-                                    <div class="icon"><i class="fa fa-btc"></i></div>
-                                    <div class="s-report-title d-flex justify-content-between">
-                                        <h4 class="header-title mb-0">Chart 1</h4>
-                                        <p>24 H</p>
-                                    </div>
-                                    <div class="d-flex justify-content-between pb-2">
-                                        <h2>$ 4567809,987</h2>
-                                        <span>- 45.87</span>
-                                    </div>
-                                </div>
-                                <canvas id="coin_sales1" height="100"></canvas>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="single-report mb-xs-30">
-                                <div class="s-report-inner pr--20 pt--30 mb-3">
-                                    <div class="icon"><i class="fa fa-btc"></i></div>
-                                    <div class="s-report-title d-flex justify-content-between">
-                                        <h4 class="header-title mb-0">Chart 2</h4>
-                                        <p>24 H</p>
-                                    </div>
-                                    <div class="d-flex justify-content-between pb-2">
-                                        <h2>$ 4567809,987</h2>
-                                        <span>- 45.87</span>
-                                    </div>
-                                </div>
-                                <canvas id="coin_sales2" height="100"></canvas>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="single-report">
-                                <div class="s-report-inner pr--20 pt--30 mb-3">
-                                    <div class="icon"><i class="fa fa-eur"></i></div>
-                                    <div class="s-report-title d-flex justify-content-between">
-                                        <h4 class="header-title mb-0">Chart 3</h4>
-                                        <p>24 H</p>
-                                    </div>
-                                    <div class="d-flex justify-content-between pb-2">
-                                        <h2>$ 4567809,987</h2>
-                                        <span>- 45.87</span>
-                                    </div>
-                                </div>
-                                <canvas id="coin_sales3" height="100"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-                <!-- sales report area end -->
-                <!-- overview area start -->
-                <!-- overview area end -->
-                <!-- market value area start -->
-                <!-- market value area end -->
-                <!-- row area start -->
-                <!-- row area end -->
-                <!-- row area start-->
             </div>
 
         </div>
@@ -315,6 +254,8 @@
     <script src="{{asset('template_styles/js/pie-chart.js')}}"></script>
     <script src="{{asset('template_styles/js/plugins.js')}}"></script>
     <script src="{{asset('template_styles/js/scripts.js')}}"></script>
+    <script src="{{asset('js/bootstrap-select.min.js')}}"></script>
+    <script src="{{asset('js/csrf_token.js')}}"></script>
     @yield('custom_js')
 </body>
 </html>

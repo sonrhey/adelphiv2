@@ -121,4 +121,9 @@ class ClientController extends Controller
         ->make(true);
     }
 
+    public function client_list(){
+        $get_client = Client::all();
+        return response()->json($get_client);
+    }
+
 }

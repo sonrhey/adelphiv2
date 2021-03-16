@@ -103,7 +103,6 @@ class AccountController extends Controller
         $identificationlist = IdentificationList::all();
         $process = $this->onProcess($id);
         $acctloanprocess = AccountLoanProcess::where('account_id', $id)->with('loanprocess')->get();
-        // dd($acctloanprocess->loanprocess->name);
         return view('pages.accounts.'.$view_name.'', compact('account', 'clients', 'amounts', 'loan_types', 'branches', 'statuses', 'identificationlist', 'process', 'acctloanprocess'));
     }
 
@@ -118,12 +117,12 @@ class AccountController extends Controller
     { 
         try{
         $loan_amount = LoanAmount::find($request->loan_amount_id);
-        $appr_loan_amount = LoanAmount::find($request->approved_load_amount_id);
+        $appr_loan_amount = ($request->approved_load_amount_id == null ) ? NULL : LoanAmount::find($request->approved_load_amount_id) ;
         $account = Account::find($id);
         $account->updated_by = Auth::user()->id;
         $account->approved_by = Auth::user()->id;
         $account->loan_amount = $loan_amount->amount;
-        $account->approved_loan_amount = $appr_loan_amount->amount;
+        $account->approved_loan_amount = ($appr_loan_amount == null) ? null : $appr_loan_amount->amount ;
         $account->fill($request->all());
         $account->save();
 
@@ -267,7 +266,7 @@ class AccountController extends Controller
         return $account_number;
     }
     public function getAccounts(){
-        $accounts = Account::select('mst_account.id', 'lt.name as type', 'mst_account.account_number', 'c.first_name', 'c.middle_name', 'c.last_name', 'b.name', 'st.name as status')->leftjoin('clients as c', 'mst_account.client_id', '=', 'c.id')->leftjoin('branches as b', 'mst_account.branch_id', '=', 'b.id')->leftjoin('account_status as st', 'mst_account.account_status_id', '=', 'st.id')->leftjoin('loan_types as lt', 'mst_account.loan_type_id', '=', 'lt.id');
+        $accounts = Account::select('mst_account.id', 'lt.name as type', 'mst_account.account_number', 'c.first_name', 'c.middle_name', 'c.last_name', 'b.name', 'st.name as status')->leftjoin('clients as c', 'mst_account.client_id', '=', 'c.id')->leftjoin('branches as b', 'mst_account.branch_id', '=', 'b.id')->leftjoin('account_status as st', 'mst_account.account_status_id', '=', 'st.id')->leftjoin('loan_types as lt', 'mst_account.loan_type_id', '=', 'lt.id')->orderBy('mst_account.id', 'DESC');
         return DataTables::of($accounts)
         ->addColumn('action', function ($accounts){
             return '<a class="btn btn-rounded btn-info btn-xs" href="accounts/'.$accounts->id.'/edit"><i class="fa fa-edit"></i>Edit</a>';
@@ -341,7 +340,7 @@ class AccountController extends Controller
     }
 
     public function approved_loan(){
-        $accounts = Account::select('mst_account.id', 'lt.name as type', 'mst_account.account_number', 'c.first_name', 'c.middle_name', 'c.last_name', 'b.name', 'st.name as status')->leftjoin('clients as c', 'mst_account.client_id', '=', 'c.id')->leftjoin('branches as b', 'mst_account.branch_id', '=', 'b.id')->leftjoin('account_status as st', 'mst_account.account_status_id', '=', 'st.id')->leftjoin('loan_types as lt', 'mst_account.loan_type_id', '=', 'lt.id')->where('mst_account.account_status_id', 3)->where('mst_account.loan_process_status_id', '<>', 3);
+        $accounts = Account::select('mst_account.id', 'lt.name as type', 'mst_account.account_number', 'c.first_name', 'c.middle_name', 'c.last_name', 'b.name', 'st.name as status')->leftjoin('clients as c', 'mst_account.client_id', '=', 'c.id')->leftjoin('branches as b', 'mst_account.branch_id', '=', 'b.id')->leftjoin('account_status as st', 'mst_account.account_status_id', '=', 'st.id')->leftjoin('loan_types as lt', 'mst_account.loan_type_id', '=', 'lt.id')->where('mst_account.account_status_id', 3)->where('mst_account.loan_process_status_id', '<>', 3)->orderBy('mst_account.id', 'DESC');
         return DataTables::of($accounts)
         ->addColumn('action', function ($accounts){
             return '<a class="btn btn-rounded btn-info btn-xs" href="payment/'.$accounts->id.'/pay-loan"><i class="fa fa-money"></i>Pay</a>';

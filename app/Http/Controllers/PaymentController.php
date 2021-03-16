@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 use App\Account;
 use App\AmmortizationSchedule;
+use App\ChequeManagement;
+use App\ChequeHistory;
 use Yajra\DataTables\Facades\Datatables;
 use Illuminate\Http\Request;
+use DB;
 
 class PaymentController extends Controller
 {
@@ -90,38 +93,80 @@ class PaymentController extends Controller
         $account = AmmortizationSchedule::where('account_id', $id)->with('ammortization_status');
         return DataTables::of($account)
         ->addColumn('action', function ($c){
-            if($c->balance == 0){
-                return '<input type="text" class="form-control payment-input" data-loan-schedule-id="'.$c->id.'" id="payment'.$c->id.'" value="'.$c->due_ammount.'" readonly>';
-            }else{
-                return '<input type="text" class="form-control payment-input" data-loan-schedule-id="'.$c->id.'" id="payment'.$c->id.'">';
+            $controls = "";
+            if($c->balance > 0){
+                $cheques = $c->account->client->cheque->where('cheque_value', '>', 0);
+                $select = "";
+                foreach($cheques as $chq){
+                    $select .= "
+                    <option data-cheque-id=".$chq->id." data-payment-id=".$c->id." value=".$chq->cheque_value.">".$chq->cheque_name."</option>
+                    ";
+                }
+                $controls = '<div class="row" style="margin: auto;"><div class="col-xs-12" style="width: 100%"><select class="form-control selectpicker" data-live-search="true" data-style="btn-user btn-bordered" name="bank_id" required><option selected disabled>Select a Cheque</option>'.$select.'
+                </select></div><div class="col-xs-12 mt-2"><form id="payloannow"><div class="row"><div class="col-sm-9" style="padding-right: 0; max-width: 68%"><input type="text" class="form-control payment-input" data-loan-schedule-id="'.$c->id.'" id="payment'.$c->id.'" required></div><div class="col-sm-3" style="padding-right: 0;"><button class="btn btn-primary" type="submit">Pay</button></div></div></form></div></div>';
             }
-            
+
+            return $controls;
         })
         ->make(true);
     }
 
     public function payment_loan($id, Request $request){
-        $paymentdetails = $request->payment_details;
-        $payments = json_decode($paymentdetails);
-        // return count($decode);
-        foreach($payments as $pmts){
-            $payment_id = $pmts->payment_id;
-            $balance = $pmts->balance;
-            $due_amount = $pmts->due_amount;
-            $payment = $pmts->payment;
-            $status = $this->payment_status($due_amount, $payment, $balance);
+        DB::beginTransaction();
+        try{
+            $loanScheduleId = $request->loanScheduleId;
+            $ammort = AmmortizationSchedule::find($loanScheduleId);
+            $loanType = Account::find($ammort->account_id);
+            $loanTypeName = $loanType->loan_type->name;
+            $payment = $request->paymentValue - $ammort->due_ammount;
 
-            $amtsched = AmmortizationSchedule::where([
-                'id' => $payment_id,
-                'account_id' => $id
-            ])->update([
-                'balance' => $balance,
-                'ammortization_schedule_status_id' => $status
-            ]);
+            if($payment < 0){
+                $balance = (-1) * $payment;
+                $ammort->balance = $balance;
+                $ammort->ammortization_schedule_status_id = 4;
+                $ammort->save();
+
+                $cheque = ChequeManagement::find($request->chequeId);
+                $cheque->cheque_value = 0;
+                $cheque->save();
+
+                $cheque_history = $this->chequeHistory($request->chequeId, $request->paymentValue, $id, $loanScheduleId, 0);
+            }else{
+                $ammort->balance = 0;
+                $ammort->ammortization_schedule_status_id = 2;
+                $ammort->save();
+
+                $cheque = ChequeManagement::find($request->chequeId);
+                $cheque->cheque_value = $payment;
+                $cheque->save();
+
+                $cheque_history = $this->chequeHistory($request->chequeId, $ammort->due_ammount, $id, $loanScheduleId, $payment);
+            }
+
+            $checkAccount = AmmortizationSchedule::where('account_id', $id)->where('balance', '>', 0)->count();
+
+            if($checkAccount == 0){
+                $account = Account::find($id);
+                $account->account_status_id = 4;
+                $account->save();
+            }
+
+            DB::commit();
+            return redirect()->back();
+        }catch(\Exception $ex){
+            DB::rollback();
+            return $ex;
         }
+    }
 
-        $check = $this->check_if_fully_paid($id);
-        return 'Payment Success!';
+    private function chequeHistory($chequeId, $paymentValue, $accountId, $loanScheduleId, $remainingBalance){
+        $cheque_history = new ChequeHistory();
+        $cheque_history->cheque_id = $chequeId;
+        $cheque_history->account_id = $accountId;
+        $cheque_history->loan_schedule_id = $loanScheduleId;
+        $cheque_history->deducted_amount = $paymentValue;
+        $cheque_history->remaining_balance = $remainingBalance;
+        $cheque_history->save();
     }
 
     private function payment_status($due_amount, $payment, $balance){

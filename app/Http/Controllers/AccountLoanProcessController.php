@@ -217,7 +217,6 @@ class AccountLoanProcessController extends Controller
 
     public function payment_schedule($id){
         $amschedule = AmmortizationSchedule::where('account_id', $id)->get();
-        // dd($amschedule->first()->account->user->first_name);
         return view('pages.accounts.payment_schedule.index', compact('amschedule'));
     }
 }

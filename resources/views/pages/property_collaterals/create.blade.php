@@ -43,7 +43,7 @@
                             </div>
                             <div class="col-sm-3 my-1">
                                 <label>Tax Declaration No.</label>
-                                <input class="form-control" type="text" name="tax_declaration_number" required>
+                                <input class="form-control" type="number" name="tax_declaration_number" required>
                             </div>
 
                             
