@@ -52,12 +52,15 @@ class PropertyCollateralController extends Controller
      */
     public function store(Request $request, $accounts)
     {   
-
-        $property_collateral = new PropertyCollateral($request->all());
-        $property_collateral->account_id = $accounts;
-        $property_collateral->added_by = Auth::user()->id;
-        $property_collateral->save();
-        return redirect('accounts/'.$accounts.'/edit');
+        try{
+            $property_collateral = new PropertyCollateral($request->all());
+            $property_collateral->account_id = $accounts;
+            $property_collateral->added_by = Auth::user()->id;
+            $property_collateral->save();
+            return redirect('accounts/'.$accounts.'/edit');
+        }catch(\Exception $ex){
+            dd($ex);
+        }
     }
 
     /**

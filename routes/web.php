@@ -43,8 +43,11 @@ Route::group(['middleware' => ['auth', 'access']], function () {
 	Route::get('clients/get', 'ClientController@getClients');
 	Route::get('clients/{id}/view', 'ClientController@show');
 	Route::get('clients/{id}/viewfamily','ClientFamilyController@viewFamily');
-	Route::get('banks/get', 'BankController@getBanks');
 	Route::get('clients/{id}/viewbankaccount', 'BankAccountController@viewBank');
+	Route::post('/clients/client_list', 'ClientController@client_list');
+
+	/*Banks*/
+	Route::post('banks/getlist', 'BankController@getlist');
 
 	/*Account*/
 	Route::get('accounts/get', 'AccountController@getAccounts');
@@ -71,9 +74,10 @@ Route::group(['middleware' => ['auth', 'access']], function () {
 	Route::post('/payment/{id}/pay-loan', 'PaymentController@payment_loan');
 	/*End Payment*/
 
-	/*Adding Modules*/
-
-	/*End Adding Modules*/
+	/*Cheque Management*/
+	Route::post('/chequemanagement/account_numbers', 'ChequeManagementController@account_numbers');
+	Route::get('/chequemanagement/get', 'ChequeManagementController@get');
+	/*Add Cheque Management*/
 
 	/*Penalties*/
 	Route::get('penalties/get','PenaltyController@getPenalties');
@@ -98,6 +102,7 @@ Route::group(['middleware' => ['auth', 'access']], function () {
 	Route::resource('penalty','PenaltyController');
 	Route::resource('payment','PaymentController');
 	Route::resource('penalties','PenaltyController');
+	Route::resource('chequemanagement','ChequeManagementController');
 
 	/*End resource routes*/
 });

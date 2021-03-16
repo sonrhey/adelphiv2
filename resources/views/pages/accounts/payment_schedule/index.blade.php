@@ -4,7 +4,7 @@
         <div class="card">
             <div class="card-body">
             <div class="container">
-                <button class="btn btn-info mb-3" onclick="printDiv()">Print Payment Schedule</button>
+                <button class="btn btn-info mb-3" onclick="printDiv1()">Print Payment Schedule</button>
                 <div id="DivIdToPrint">
                     <h3>Loan Payment Schedule</h3>
                         <div class="form-group">
@@ -93,4 +93,6 @@
 @section('custom_js')
     <!-- Start datatable js -->
     <script src="{{asset('js/pages/accounts/payment_schedule/index.js')}}"></script>
+    <script src="{{asset('js/pages/accounts/payment_schedule/print.min.js')}}"></script>
+    <script src="{{asset('js/pages/accounts/payment_schedule/print.js')}}"></script>
 @endsection
