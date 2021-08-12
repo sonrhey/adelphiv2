@@ -12,8 +12,13 @@
                         <div class="col-md-9">
                             <?php $total = 0; ?>
                             @foreach ($account->client->cheque as $cheque)
-                                <?php $total += $cheque->cheque_value ?>
+                                <?php 
+                                $total += $cheque->cheque_value; 
+                                ?>
                             @endforeach
+                            <?php
+                            $total += @$account->client->cash->first()->amount;
+                            ?>
                             <h2>&#8369;{{ number_format($total, 2, '.', ',') }}</h2>
                         </div>
                     </div>
@@ -50,8 +55,8 @@
                                 <th>(&#8369;) Curr. Balance</th>
                                 <th>(&#8369;) Prev. Balance</th>
                                 <th>(&#8369;) Penalty</th>
-                                <th>Days Due</th>
-                                <th>Status</th>
+                                <th style="width: 0px !important;">Days Due</th>
+                                <th style="width: 0px !important;">Status</th>
                                 <th>(&#8369;) Payment</th>
                             </tr>
                         </thead>    
@@ -118,7 +123,7 @@
             {data: 'balance', name: 'ammortization.balance', orderable: false},
             {data: 'penalty', name: 'ammortization.penalty', orderable: false},
             {data: 'days_due', name: 'ammortization.days_due', orderable: false},
-            {data: 'ammortization_status.name', name: 'ammortization_status.name', orderable: false},
+            {data: 'ammortization_status', name: 'ammortization_status', orderable: false},
 	        {data: 'action', name: 'action', orderable: false, searchable: false}
 	    ]
 	    });

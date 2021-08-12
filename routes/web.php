@@ -83,6 +83,15 @@ Route::group(['middleware' => ['auth', 'access']], function () {
 	Route::get('penalties/get','PenaltyController@getPenalties');
 	/*End Penalties*/
 
+	/*Release Schedule*/
+	Route::get('/accounts/{id}/releaseschedule', 'ReleaseScheduleController@PaymentSchedule');
+
+	// SOA
+	Route::get('soa', 'SOAController@index');
+	Route::get('soa/getclient', 'SOAController@getclient');
+	Route::get('soa/getaccounts', 'SOAController@getaccounts');
+	Route::post('soa/generatesoa', 'SOAController@generatesoa');
+
 	/*Resource routes goes here*/
 	Route::resource('clients', 'ClientController');
 	Route::resource('clients.family', 'ClientFamilyController');

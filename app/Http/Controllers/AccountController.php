@@ -238,9 +238,9 @@ class AccountController extends Controller
     }
     private function accountNumber($account_id, $loan_type_id){
         if ($loan_type_id == 1) {
-            $prefix = 'I';
-        }else{
             $prefix = 'A';
+        }else{
+            $prefix = 'I';
         }
         $account_id_length = strlen($account_id);
        if($account_id_length < 10){
@@ -340,7 +340,7 @@ class AccountController extends Controller
     }
 
     public function approved_loan(){
-        $accounts = Account::select('mst_account.id', 'lt.name as type', 'mst_account.account_number', 'c.first_name', 'c.middle_name', 'c.last_name', 'b.name', 'st.name as status')->leftjoin('clients as c', 'mst_account.client_id', '=', 'c.id')->leftjoin('branches as b', 'mst_account.branch_id', '=', 'b.id')->leftjoin('account_status as st', 'mst_account.account_status_id', '=', 'st.id')->leftjoin('loan_types as lt', 'mst_account.loan_type_id', '=', 'lt.id')->where('mst_account.account_status_id', 3)->where('mst_account.loan_process_status_id', '<>', 3)->orderBy('mst_account.id', 'DESC');
+        $accounts = Account::select('mst_account.id', 'lt.name as type', 'mst_account.account_number', 'c.first_name', 'c.middle_name', 'c.last_name', 'b.name', 'st.name as status')->leftjoin('clients as c', 'mst_account.client_id', '=', 'c.id')->leftjoin('branches as b', 'mst_account.branch_id', '=', 'b.id')->leftjoin('account_status as st', 'mst_account.account_status_id', '=', 'st.id')->leftjoin('loan_types as lt', 'mst_account.loan_type_id', '=', 'lt.id')->where('mst_account.account_status_id', 3)->orWhere('mst_account.account_status_id', 4)->orderBy('mst_account.id', 'DESC');
         return DataTables::of($accounts)
         ->addColumn('action', function ($accounts){
             return '<a class="btn btn-rounded btn-info btn-xs" href="payment/'.$accounts->id.'/pay-loan"><i class="fa fa-money"></i>Pay</a>';

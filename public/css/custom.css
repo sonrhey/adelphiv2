@@ -113,6 +113,18 @@
   animation: popin 1.5s linear infinite 0.5s;
 }
 
+.generated-soa{
+  display: none;
+}
+
+.modal-size{
+  min-width: 80%;
+}
+
+.button-right{
+  text-align: right;
+}
+
 @keyframes popin{
   0%{
       opacity: 0;

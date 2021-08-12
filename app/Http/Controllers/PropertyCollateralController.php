@@ -59,7 +59,7 @@ class PropertyCollateralController extends Controller
             $property_collateral->save();
             return redirect('accounts/'.$accounts.'/edit');
         }catch(\Exception $ex){
-            dd($ex);
+            throw $ex;
         }
     }
 
