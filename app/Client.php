@@ -29,5 +29,10 @@ class Client extends Model
     public function city2 (){
     	return $this->belongsTo(Barangay::class,'city2_id');
     }
-
+    public function cheque(){
+        return $this->hasMany(ChequeManagement::class, 'client_id');
+    }
+    public function cash(){
+        return $this->hasMany(CashManagement::class, 'client_id');
+    }
 }

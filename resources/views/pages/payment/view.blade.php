@@ -82,7 +82,7 @@
             {data: 'balance', name: 'ammortization.balance', orderable: false},
             {data: 'penalty', name: 'ammortization.penalty', orderable: false},
             {data: 'days_due', name: 'ammortization.days_due', orderable: false},
-            {data: 'ammortization_status.name', name: 'ammortization_status.name', orderable: false},
+            {data: 'ammortization_status', name: 'ammortization_status', orderable: false},
 	        {data: 'action', name: 'action', orderable: false, searchable: false}
 	    ]
 	    });

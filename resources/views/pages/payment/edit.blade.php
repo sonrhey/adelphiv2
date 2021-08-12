@@ -5,8 +5,23 @@
             <div class="card-body">
                 <div class="container">
                     <input type="hidden" value="{{$account->id}}" name="account_id">
-                    <h3 class="mb-5">Wallet Balance:</h3>
-                    <h4>2500.00</h4>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h3>Wallet Balance:</h3>
+                        </div>
+                        <div class="col-md-9">
+                            <?php $total = 0; ?>
+                            @foreach ($account->client->cheque as $cheque)
+                                <?php 
+                                $total += $cheque->cheque_value; 
+                                ?>
+                            @endforeach
+                            <?php
+                            $total += @$account->client->cash->first()->amount;
+                            ?>
+                            <h2>&#8369;{{ number_format($total, 2, '.', ',') }}</h2>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -32,19 +47,6 @@
             <div class="card-body">
                 <div class="container">
                     <h5 class="mb-5">Payment Schedules</h5>
-                    <!-- <div class="row mb-4">
-                        <div class="col-md-1">
-                            <label>Payment Amount: </label>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text" class="form-control" placeholder="Input payment here" name="payment_amount" autofocus>
-                            <span class="text-muted mt-2">(Press Enter to Submit)</span>
-                        </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-primary" id="paynow">Pay Now</button>
-                        </div>
-                    </div> -->
-                    <!-- <button class="btn btn-primary mb-4 pull-right">Proceed</button> -->
                     <table class="table table-bordered datatables" id="tbl-payments">
                         <thead>
                             <tr>
@@ -53,8 +55,8 @@
                                 <th>(&#8369;) Curr. Balance</th>
                                 <th>(&#8369;) Prev. Balance</th>
                                 <th>(&#8369;) Penalty</th>
-                                <th>Days Due</th>
-                                <th>Status</th>
+                                <th style="width: 0px !important;">Days Due</th>
+                                <th style="width: 0px !important;">Status</th>
                                 <th>(&#8369;) Payment</th>
                             </tr>
                         </thead>    
@@ -62,23 +64,41 @@
                 </div>
             </div>
         </div>
-        <!--alert modal-->
-        <div class="modal fade" id="changeresponsemodal">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5>Payment Change</h5>
+        <!--success modal-->
+        <div class="modal fade" id="succesPayment">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content" style="border: 0;">
+                    <div class="modal-header" style="background: #0d7b5d;color: white;">
+                        <h6 style="">Success Payment</h6>
+                        <label class="modal-close" data-dismiss="modal" style="margin: 0; color: white;" data-toggle="modal">X</label>
+                        </div>
+                        <div class="modal-body" style="">
+                            <h4>Payment Success!</h4>
+                        </div>
+                        <div class="modal-footer">
+                        </div>
                     </div>
-                    <div class="modal-body">
-                    <h1 class="text-center btn-success" style="padding: 10px;" id="change"></h1>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-primary" id="paynow">Pay Now</button>
+                </div>
+            </div>
+        </div>       
+        <!--error modal-->
+        <div class="modal fade" id="errorPayment">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content" style="border: 0;">
+                    <div class="modal-header" style="background: #f54b35;color: white;">
+                        <h6 style="">Error Payment</h6>
+                        <label class="modal-close" data-dismiss="modal" style="margin: 0; color: white;">X</label>
+                        </div>
+                        <div class="modal-body" style="">
+                            <h5>Payment Error, Please try again!</h5>
+                        </div>
+                        <div class="modal-footer">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!---->
+        <div id="preloader" style="display: none"><div class="loader"></div></div>
     @endsection
 @section('custom_css')
     <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables/jquery.dataTables.css') }}">
@@ -103,7 +123,7 @@
             {data: 'balance', name: 'ammortization.balance', orderable: false},
             {data: 'penalty', name: 'ammortization.penalty', orderable: false},
             {data: 'days_due', name: 'ammortization.days_due', orderable: false},
-            {data: 'ammortization_status.name', name: 'ammortization_status.name', orderable: false},
+            {data: 'ammortization_status', name: 'ammortization_status', orderable: false},
 	        {data: 'action', name: 'action', orderable: false, searchable: false}
 	    ]
 	    });

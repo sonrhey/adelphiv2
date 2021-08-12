@@ -7,6 +7,7 @@ use App\Account;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\AmmortizationSchedule;
+use App\ReleaseSchedule;
 use App\LoanAmount;
 use DB;
 
@@ -128,7 +129,7 @@ class AccountLoanProcessController extends Controller
         }
     }
 
-        private function calculateammortization_interestonly($accountnumber){
+    private function calculateammortization_interestonly($accountnumber){
         $getloanamount = Account::where('account_number', $accountnumber)->first();
         $loan_amount = LoanAmount::find($getloanamount->loan_amount_id);
         $principal = $loan_amount->amount;
@@ -199,25 +200,17 @@ class AccountLoanProcessController extends Controller
     }
 
     private function save_ammortization($accountid, $due_date, $due_amount, $interest, $principal){
-        try{
-            $ammortization = new AmmortizationSchedule();
-            $ammortization->account_id = $accountid;
-            $ammortization->due_date = $due_date;
-            $ammortization->due_ammount = $due_amount;
-            $ammortization->interest = $interest;
-            $ammortization->principal = $principal;
-            $ammortization->balance = $due_amount;
-            $ammortization->ammortization_schedule_status_id = 1;
-            $ammortization->account_status_id = 5;
-            $ammortization->save();
-        }catch(\Exception $ex){
-            throw $ex;
-        }
+        $ammortization = new ReleaseSchedule();
+        $ammortization->account_id = $accountid;
+        $ammortization->due_date = $due_date;
+        $ammortization->due_ammount = $due_amount;
+        $ammortization->interest = $interest;
+        $ammortization->principal = $principal;
+        $ammortization->save();
     }
 
     public function payment_schedule($id){
         $amschedule = AmmortizationSchedule::where('account_id', $id)->get();
-        // dd($amschedule->first()->account->user->first_name);
         return view('pages.accounts.payment_schedule.index', compact('amschedule'));
     }
 }

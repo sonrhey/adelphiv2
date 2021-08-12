@@ -115,5 +115,9 @@ class BankController extends Controller
             })->make(true);
 
     }
+    public function getlist(){
+        $get_banks = Bank::all();
+        return response()->json($get_banks);
+    }
    
 }

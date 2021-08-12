@@ -8,6 +8,6 @@ class ReleaseSchedule extends Model
 {
     protected $table = 'release_schedule'; 
     protected $fillable = [
-        'account_id','date','release_schedule_status'
+        'account_id','due_date','due_ammount','interest','principal'
     ];
 }

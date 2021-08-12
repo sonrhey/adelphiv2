@@ -147,31 +147,34 @@
                 </div>
             </div>
         </div>
-
-        @if($acctloanprocess[2]->status == 1)
-        <div class="card mt-5">
-            <div class="card-body">
-                <div class="container">
-                    <div class="clearfix">
-                        <h3 class="header-title float-left">Partial Payment Schedule</h3>
-                        <a class="btn btn-danger btn-xs float-right" href="property_collaterals/create">Print Schedule</a>
+        @if(count($acctloanprocess) > 0)
+            @if($acctloanprocess[2]->status == 1)
+            <div class="card mt-5">
+                <div class="card-body">
+                    <div class="container">
+                        <div class="clearfix">
+                            <h3 class="header-title float-left">Temporary Payment Schedule</h3>
+                            <button class="btn btn-danger btn-xs float-right" onclick="printDiv()">Print Schedule</button>
+                        </div>
+                        <div class="payment-schedule">
+                            <div class="form-group">
+                                <h4>Account Number: {{$account->account_number}} - Payment Schedule</h4>
+                            </div>
+                            <table class="table table-striped" id="tbl-payments">
+                                <thead>
+                                    <tr>
+                                        <th>Due Date</th>
+                                        <th>(&#8369;) Due Amount</th>
+                                        <th>(&#8369;) Interest</th>
+                                        <th>(&#8369;) Principal</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
                     </div>
-                    <table class="table table-striped" id="tbl-payments">
-                        <thead>
-                            <tr>
-                                <th>Due Date</th>
-                                <th>(&#8369;) Due Amount</th>
-                                <th>(&#8369;) Curr. Balance</th>
-                                <th>(&#8369;) Prev. Balance</th>
-                                <th>(&#8369;) Penalty</th>
-                                <th>Days Due</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                    </table>
                 </div>
             </div>
-        </div>
+            @endif
         @endif
         <div class="card mt-5">
             <div class="card-body">
@@ -241,25 +244,11 @@
     <!-- Start datatable js -->
     <script src="{{ asset('js/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('js/datatables/dataTables.bootstrap4.min.js') }}"></script>
-    <script>
-    var ar = $('#tbl-payments').DataTable({
-        pageLength: 50,
-	    processing: true,
-	    serverSide: false,
-	    ajax: '/payment/{{$account->id}}/pay-schedules',
-	    columns: [
-            {data: 'due_date', name: 'ammortization.due_date', orderable: false},
-	        {data: 'due_ammount', name: 'ammortization.due_ammount', orderable: false},
-            {data: 'balance', name: 'ammortization.balance', orderable: false},
-            {data: 'balance', name: 'ammortization.balance', orderable: false},
-            {data: 'penalty', name: 'ammortization.penalty', orderable: false},
-            {data: 'days_due', name: 'ammortization.days_due', orderable: false},
-            {data: 'ammortization_status.name', name: 'ammortization_status.name', orderable: false}
-	    ]
-	    });s
-    </script>
     <script src="{{ asset('js/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('js/datatables/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{asset('js/pages/property_collaterals/edit.js')}}"></script>
     <script src="{{asset('js/pages/identification/edit.js')}}"></script>
+    <script src="{{asset('js/pages/accounts/payment_schedule/print.min.js')}}"></script>
+    <script src="{{asset('js/pages/accounts/payment_schedule/print.js')}}"></script>
+    <script src="{{asset('js/pages/accounts/payment_schedule/schedules.js')}}"></script>
 @endsection
