@@ -147,7 +147,7 @@ class AccountController extends Controller
         $principal = $getloanamount->approved_loan_amount;
         $interest = (double)$principal * 0.03;
 
-        $to_pay = 18;
+        $to_pay = 6;
         $i=0;
 
         while($i<$to_pay){

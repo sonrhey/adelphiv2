@@ -276,4 +276,44 @@ class PaymentController extends Controller
 
         return $amtsched;
     }
+
+    private function calculateammortization_interestonly($accountnumber,$principal){
+        $getloanamount = Account::where('account_number', $accountnumber)->first();
+        $interest = (double)$principal * 0.03;
+
+        $to_pay = 6;
+        $i=0;
+
+        while($i<$to_pay){
+            $i++;
+            $date = Carbon::now();
+            $due_date = $this->get_monthly_dates($date, $i);
+
+            $save_ammort = $this->save_ammortization($getloanamount->id, $due_date, $interest, $interest, $principal);
+        }
+    }
+
+    private function get_monthly_dates($date, $i){
+        $increment_by_1 = strtotime("+".$i." months", strtotime($date));
+        $monthly_dates = date('Y-m-d',$increment_by_1);
+
+        return $monthly_dates;
+    }
+
+    private function save_ammortization($accountid, $due_date, $due_amount, $interest, $principal){
+        try{
+            $ammortization = new AmmortizationSchedule();
+            $ammortization->account_id = $accountid;
+            $ammortization->due_date = $due_date;
+            $ammortization->due_ammount = $due_amount;
+            $ammortization->interest = $interest;
+            $ammortization->principal = $principal;
+            $ammortization->balance = $due_amount;
+            $ammortization->ammortization_schedule_status_id = 1;
+            $ammortization->save();
+        }catch(\Exception $ex){
+            throw $e;
+        }
+    }
+
 }
