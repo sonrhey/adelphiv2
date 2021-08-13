@@ -8,7 +8,7 @@ class ChequeManagement extends Model
 {
     protected $table = 'cheque_management';
     protected $fillable = [
-    	'client_id', 'bank_id', 'cheque_name', 'cheque_value'
+    	'client_id', 'bank_id', 'cheque_name', 'cheque_value', 'cheque_expiry_date'
     ];
     public function client_name(){
         return $this->belongsTo(Client::class, 'client_id', 'id');

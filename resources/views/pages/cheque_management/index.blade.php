@@ -10,7 +10,7 @@
                         <tr>
                             <th>Client Name</th>
                             <th>Bank Name</th>
-                            <th>Cheque Name</th>
+                            <th>Cheque Number</th>
                             <th>(&#8369;) Cheque Amount</th>
                             <th>Action</th>
                         </tr>
@@ -40,8 +40,12 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Cheque Name</label>
-                            <input type="text" class="form-control" name="cheque_name" required>
+                            <label>Cheque Number</label>
+                            <input type="number" class="form-control" name="cheque_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Cheque Expiry Date</label>
+                            <input type="date" class="form-control" name="cheque_expiry_date" required>
                         </div>
                         <div class="form-group">
                             <label>Cheque Value</label>
@@ -78,8 +82,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Cheque Name</label>
-                            <input type="text" class="form-control" name="selected_cheque_name" required>
+                            <label>Cheque Number</label>
+                            <input type="number" class="form-control" name="selected_cheque_name" required>
                         </div>
                         <div class="form-group">
                             <label>Cheque Value</label>

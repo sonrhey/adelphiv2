@@ -8,6 +8,6 @@ class ChequeHistory extends Model
 {
     protected $table = 'cheque_history';
     protected $fillable = [
-    	'cheque_id', 'account_id', 'deducted_amount', 'deducted_amount', 'remaining_balance', 'loan_schedule_id'
+    	'cheque_id', 'account_id', 'deducted_amount', 'amount_paid', 'remaining_balance', 'loan_schedule_id'
     ];
 }
