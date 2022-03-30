@@ -24,7 +24,7 @@
                                         <td>{{$amschedule->first()->account->loan_type->name}}</td>
                                     </tr>
                                     <tr>
-                                        <td>Per 6months Interest Rate</td>
+                                        <td>Interest Rate (Renewable every 4 mos)</td>
                                         <td>2%</td>
                                     </tr>
                                     <tr>
