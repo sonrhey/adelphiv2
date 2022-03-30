@@ -5,7 +5,15 @@
             <div class="card-body">
                 <div class="container">
                     <input type="hidden" value="{{$account->id}}" name="account_id">
-                    <h5 class="mb-5">Account Number: {{$account->account_number}}</h5>
+                    <?php
+                    $color = "";
+                    if($account->account_status_id == 4){
+                        $color = "green";
+                    }else{
+                        $color = "red";
+                    }
+                    ?>
+                    <h5 class="mb-5">Account Number: {{$account->account_number}}  <span style="color: {{$color}}; text-transform: uppercase">[<strong>{{$account->status->name}}</strong>]</span></h5>
                     <div class="row">
                         <div class="col-md-6">
                             <label>Client Name</label>

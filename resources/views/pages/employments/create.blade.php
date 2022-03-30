@@ -12,16 +12,16 @@
                                 <input class="form-control" type="text" name="company_name" required>
                             </div>
                             <div class="col-sm-3 my-1">
-                                <label>Contact Number</label>
+                                <label>Telephone Number</label>
                                 <input class="form-control" type="text" name="contact_number" required>
                             </div>
                             <div class="col-sm-3 my-1">
                                 <label>Mobile Number</label>
-                                <input class="form-control" type="text" name="mobile_number" required>
+                                <input class="form-control" type="text" name="mobile_number" >
                             </div>
                             <div class="col-sm-3 my-1">
                                 <label>Industry</label>
-                                <select class="form-control" name="industry_id" required>
+                                <select class="form-control" name="industry_id">
                                     <option value="" selected>Select Industry</option>
                                     @foreach($industries as $industry)
                                         <option value="{{$industry->id}}">{{$industry->name}}</option>

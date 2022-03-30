@@ -3,6 +3,28 @@ var chequeId = 0;
 var cashId = 0;
 var paymentType;
 
+var check_loan_cycle = function(){
+    var loan_cycle = localStorage.getItem("loan_cycle");
+    if(loan_cycle == 1 || loan_cycle == 2){
+        $(".cycle-count").html(loan_cycle);
+        $("#nextCycle").modal("show");
+    }
+}();
+
+$(document).on('submit', '#renew', function(e){
+    e.preventDefault();
+    $('#preloader').fadeIn();
+    $.ajax({
+        url: $(this).attr("action"),
+        method: $(this).attr("method"),
+        success: function(response){
+            $('#preloader').fadeOut();
+            localStorage.removeItem("loan_cycle");
+            location.reload();
+        }
+    });
+});
+
 $(document).on('submit', '.payloannow',function(e){
     e.preventDefault();
     var flag = false;
@@ -30,9 +52,20 @@ $(document).on('submit', '.payloannow',function(e){
             url: "pay-loan",
             data: {cashId: cashId, paymentValue: paymentValue, chequeId:chequeId, loanScheduleId: loanScheduleId, paymentType: paymentType},
             success: function(response){
+                console.log(response.loan_cycle);
+                localStorage.setItem("loan_cycle", response.loan_cycle);
                 $('#preloader').fadeOut();
-                $('#succesPayment').modal("show");
-                $("#succesPayment").on("hidden.bs.modal", function () {
+                if(response.loan_cycle == 0){
+                    $('#succesPayment').modal("show");
+                }
+                else if(response.loan_cycle == 1 || response.loan_cycle == 2){
+                    $(".cycle-count").html(response.loan_cycle);
+                    $("#nextCycle").modal("show");
+                }else if(response.loan_cycle == 3){
+                    $("#fullypaid").modal("show");
+                }
+
+                $("#succesPayment, #fullypaid, #renewal-fee").on("hidden.bs.modal", function () {
                     location.reload();
                 });
             },

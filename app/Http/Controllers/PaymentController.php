@@ -9,10 +9,14 @@ use App\PaymentType;
 use App\LoanPaymentHistory;
 use App\CashManagement;
 use App\CashHistory;
+use App\LoanCycle;
+use App\LoanAmount;
+use App\LoanTracker;
 
 use Yajra\DataTables\Facades\Datatables;
 use Illuminate\Http\Request;
 use DB;
+use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
@@ -68,8 +72,13 @@ class PaymentController extends Controller
     {
         try{
             $account = Account::find($id);
-            $view = ($account->account_status_id == 4) ? 'view' : 'edit' ;
-            return view('pages.payment.'.$view.'', compact('account'));
+            $view_name = "";
+            if($account->account_status_id == 4 || $account->account_status_id == 7){
+                $view_name = 'view';
+            }else{
+                $view_name = 'edit';
+            }
+            return view('pages.payment.'.$view_name.'', compact('account'));
         }catch(\Exception $ex){
             abort(500);
         }
@@ -104,37 +113,47 @@ class PaymentController extends Controller
         ->editColumn('ammortization_status', function($c){
             return $c->ammortization_status->name;
         })
+        ->editColumn('due_ammount', function($c){
+            return number_format($c->due_ammount, 2, '.', ',');
+        })
+        ->editColumn('balance', function($c){
+            return number_format($c->balance, 2, '.', ',');
+        })
+        ->editColumn('penalty', function($c){
+            return number_format($c->penalty, 2, '.', ',');
+        })
         ->addColumn('action', function ($c){
             $payment_types = PaymentType::all();
             $controls = "";
             $payment_type_select = "";
             $cheque = "";
             $cash = "";
-            if($c->balance > 0){
-                $payment_type_options = "";
-                foreach($payment_types as $payment_type){
-                    $payment_type_options .= '
-                        <option data-ammortization-id="'.$c->id.'" value="'.$payment_type->code.'">'.$payment_type->name.'</option>
-                    ';
-                }
-                $payment_type_select = '<div class="mb-2"><select class="form-control selectpicker" data-live-search="true" data-style="btn-user btn-bordered" name="payment_type"><option selected disabled>Select Payment Type</option>'.$payment_type_options.'</select></div>';
-                $cheques = $c->account->client->cheque->where('cheque_value', '>', 0);
-                $select = "";
-                foreach($cheques as $chq){
-                    $select .= "
-                    <option data-cheque-id=".$chq->id." data-payment-id=".$c->id." value=".$chq->cheque_value.">".$chq->cheque_name."</option>
-                    ";
-                }
+            if($c->account->account_status_id != 7 && $c->account->account_status_id != 4){
+                if($c->balance > 0){
+                    $payment_type_options = "";
+                    foreach($payment_types as $payment_type){
+                        $payment_type_options .= '
+                            <option data-ammortization-id="'.$c->id.'" value="'.$payment_type->code.'">'.$payment_type->name.'</option>
+                        ';
+                    }
+                    $payment_type_select = '<div class="mb-2"><select class="form-control selectpicker" data-live-search="true" data-style="btn-user btn-bordered" name="payment_type" style="display: block !important"><option selected disabled>Select Payment Type</option>'.$payment_type_options.'</select></div>';
+                    $cheques = $c->account->client->cheque->where('cheque_value', '>', 0);
+                    $select = "";
+                    foreach($cheques as $chq){
+                        $select .= "
+                        <option data-cheque-id=".$chq->id." data-payment-id=".$c->id." value=".$chq->cheque_value.">".$chq->cheque_name."</option>
+                        ";
+                    }
 
-                $cash = $c->account->client->cash->first();
-                $cash = '<div class="cash-display'.$c->id.'" style="display: none"><form class="payloannow"><input type="number" step="any" class="form-control payment-input" data-loan-schedule-id="'.$c->id.'" data-cash-id="'.@$cash->id.'" value="'.@$cash->amount.'"><div class="mb-2"></div><button class="btn btn-primary btn-block" type="submit">Pay</button></form></div>';
-                
-                $cheque = '<div class="row cheque-display'.$c->id.'" style="margin: auto; display: none;"><div class="col-xs-12" style="width: 100%"><select class="form-control selectpicker" data-live-search="true" data-style="btn-user btn-bordered" name="bank_id" required><option selected disabled>Select a Cheque</option>'.$select.'
-                </select></div><div class="col-xs-12 mt-2"><form class="payloannow"><div class="row"><div class="col-sm-9" style="padding-right: 0; max-width: 60%"><input type="text" class="form-control payment-input" data-loan-schedule-id="'.$c->id.'" id="payment'.$c->id.'" required></div><div class="col-sm-3" style="padding-right: 0;"><button class="btn btn-primary" type="submit">Pay</button></div></div></form></div></div>';
+                    $cash = $c->account->client->cash->first();
+                    $cash = '<div class="cash-display'.$c->id.'" style="display: none"><form class="payloannow"><input type="number" step="any" class="form-control payment-input" data-loan-schedule-id="'.$c->id.'" data-cash-id="'.@$cash->id.'" value="'.@$cash->amount.'"><div class="mb-2"></div><button class="btn btn-primary btn-block" type="submit">Pay</button></form></div>';
+                    
+                    $cheque = '<div class="row cheque-display'.$c->id.'" style="margin: auto; display: none;"><div class="col-xs-12" style="width: 100%"><select class="form-control selectpicker" data-live-search="true" data-style="btn-user btn-bordered" name="bank_id" required><option selected disabled>Select a Cheque</option>'.$select.'
+                    </select></div><div class="col-xs-12 mt-2"><form class="payloannow"><div class="row"><div class="col-sm-9" style="padding-right: 0; max-width: 60%"><input type="text" class="form-control payment-input" data-loan-schedule-id="'.$c->id.'" id="payment'.$c->id.'" required></div><div class="col-sm-3" style="padding-right: 0;"><button class="btn btn-primary" type="submit">Pay</button></div></div></form></div></div>';
 
-                $controls = '<div>'.$payment_type_select.'<div class="payment_inputs">'.$cheque.''.$cash.'</div></div>';
+                    $controls = '<div>'.$payment_type_select.'<div class="payment_inputs">'.$cheque.''.$cash.'</div></div>';
+                }
             }
-
             // return $controls;
             return $controls;
         })
@@ -151,6 +170,7 @@ class PaymentController extends Controller
             $payment = $ammort->balance - $request->paymentValue;
             $remainingBalance = 0;
             $chequeRemainingBalance = 0;
+            $loan_cycle = 0;
             $amount = 0;
             $previousAmt = $ammort->balance;
 
@@ -202,12 +222,18 @@ class PaymentController extends Controller
 
             if($checkAccount == 0){
                 $account = Account::find($id);
-                $account->account_status_id = 4;
-                $account->save();
+                $check_loan_cycle = LoanCycle::where('account_id', $account->id)->orderBy('id', 'DESC')->first();
+                $loan_cycle = $check_loan_cycle->cycle_count;
+                if($check_loan_cycle->cycle_count == 3){
+                    $account->account_status_id = 4;
+                    $account->save();
+                }
             }
 
             DB::commit();
-            return redirect()->back();
+            return response()->json([
+                "loan_cycle" => $loan_cycle
+            ], 200);
         }catch(\Exception $ex){
             DB::rollback();
             dd($ex);
@@ -277,19 +303,139 @@ class PaymentController extends Controller
         return $amtsched;
     }
 
-    private function calculateammortization_interestonly($accountnumber,$principal){
-        $getloanamount = Account::where('account_number', $accountnumber)->first();
-        $interest = (double)$principal * 0.03;
+    private function calculateammortization($accountnumber){
+        try{
+            DB::beginTransaction();
+            $account = Account::where('account_number', $accountnumber)->first();
+            $loan_cycle = LoanCycle::where('account_id', $account->id)->orderBy('id', 'DESC')->first();
+            $loan_tracker = LoanTracker::where('account_id', $account->id)->first();
+            $i = 0;
+            $date_counter = 0;
+            $approvedamount = 0;
+            $month_payment_cycle = 1;
+            $month_cycle = 6;
+            $loan_term = 18;
+            $interest = 0.02;
 
-        $to_pay = 6;
-        $i=0;
+            //check if loan tracker table
+            if($loan_tracker == null){
+                $date_counter = 0;
+            }else{
+                $date_counter = $loan_tracker->cycle_counter;
+                $month_payment_cycle = $month_payment_cycle + $loan_tracker->month_cycle;
+                $month_cycle = $month_cycle + $loan_tracker->cycle_counter;
+            }
 
-        while($i<$to_pay){
-            $i++;
-            $date = Carbon::now();
-            $due_date = $this->get_monthly_dates($date, $i);
+            //check if loan tracker table
+            if($loan_cycle == null){
+                $approvedamount = $account->approved_loan_amount;
+            }else{
+                $loan_cycle_amount = $loan_cycle->amount;
+                $approvedamount = $loan_cycle_amount - $loan_cycle->total_cycle_payment;
+            }
 
-            $save_ammort = $this->save_ammortization($getloanamount->id, $due_date, $interest, $interest, $principal);
+            //get basic calculation
+            $withoutInterest = (double)$account->approved_loan_amount / $loan_term;
+            $interest_value = (double)$approvedamount * $interest;
+            $monthly_payment = $withoutInterest + $interest_value;
+            $total_cycle_payment = $withoutInterest * 6;
+            $i = $date_counter;
+            //loop through months
+            while($i<$month_cycle){
+                $i++;
+                $date = Carbon::now();
+                $monthly_dates = $this->get_monthly_dates($date, $i); 
+                $ammortization = $this->save_ammortization($account->id, $monthly_dates, $monthly_payment, $interest_value, $approvedamount);
+            }
+
+            //loan tracker
+            $loan_tracker_insertOrUpdate = LoanTracker::firstOrNew(['account_id' => $account->id]);
+            $loan_tracker_insertOrUpdate->account_id = $account->id;
+            $loan_tracker_insertOrUpdate->month_cycle = $month_payment_cycle;
+            $loan_tracker_insertOrUpdate->cycle_counter = $i;
+            $loan_tracker_insertOrUpdate->save(); 
+
+            //loan cycle
+            $loan_cycle_insert = new LoanCycle();
+            $loan_cycle_insert->account_id = $account->id;
+            $loan_cycle_insert->amount = $approvedamount;
+            $loan_cycle_insert->cycle_count = $month_payment_cycle;
+            $loan_cycle_insert->total_cycle_payment = $total_cycle_payment;
+            $loan_cycle_insert->cycle_status = 'ONGOING';
+            $loan_cycle_insert->save();
+
+            DB::commit();
+        }catch(\Exception $ex){
+            DB::rollback();
+            dd($ex);
+        }
+    }
+
+    private function calculateammortization_interestonly($accountnumber){
+        try{
+            DB::beginTransaction();
+            $account = Account::where('account_number', $accountnumber)->first();
+            $loan_cycle = LoanCycle::where('account_id', $account->id)->orderBy('id', 'DESC')->first();
+            $loan_tracker = LoanTracker::where('account_id', $account->id)->first();
+            $i = 0;
+            $date_counter = 0;
+            $approvedamount = 0;
+            $month_payment_cycle = 1;
+            $month_cycle = 4;
+            $loan_term = 12;
+            $interest = 0.03;
+
+            //check if loan tracker table
+            if($loan_tracker == null){
+                $date_counter = 0;
+            }else{
+                $date_counter = $loan_tracker->cycle_counter;
+                $month_payment_cycle = $month_payment_cycle + $loan_tracker->month_cycle;
+                $month_cycle = $month_cycle + $loan_tracker->cycle_counter;
+            }
+
+            //check if loan tracker table
+            if($loan_cycle == null){
+                $approvedamount = $account->approved_loan_amount;
+            }else{
+                $loan_cycle_amount = $loan_cycle->amount;
+                $approvedamount = $loan_cycle_amount - $loan_cycle->total_cycle_payment;
+            }
+
+            //get basic calculation
+            // $withoutInterest = (double)$account->approved_loan_amount / $loan_term;
+            $interest_value = (double)$approvedamount * $interest;
+            // $monthly_payment = $withoutInterest + $interest_value;
+            // $total_cycle_payment = $withoutInterest * 6;
+            $i = $date_counter;
+            //loop through months
+            while($i<$month_cycle){
+                $i++;
+                $date = Carbon::now();
+                $monthly_dates = $this->get_monthly_dates($date, $i); 
+                $ammortization = $this->save_ammortization($account->id, $monthly_dates, $interest_value, $interest_value, $approvedamount);
+            }
+
+            //loan tracker
+            $loan_tracker_insertOrUpdate = LoanTracker::firstOrNew(['account_id' => $account->id]);
+            $loan_tracker_insertOrUpdate->account_id = $account->id;
+            $loan_tracker_insertOrUpdate->month_cycle = $month_payment_cycle;
+            $loan_tracker_insertOrUpdate->cycle_counter = $i;
+            $loan_tracker_insertOrUpdate->save(); 
+
+            //loan cycle
+            $loan_cycle_insert = new LoanCycle();
+            $loan_cycle_insert->account_id = $account->id;
+            $loan_cycle_insert->amount = $approvedamount;
+            $loan_cycle_insert->cycle_count = $month_payment_cycle;
+            $loan_cycle_insert->total_cycle_payment = 0;
+            $loan_cycle_insert->cycle_status = 'ONGOING';
+            $loan_cycle_insert->save();
+
+            DB::commit();
+        }catch(\Exception $ex){
+            DB::rollback();
+            dd($ex);
         }
     }
 
@@ -314,6 +460,120 @@ class PaymentController extends Controller
         }catch(\Exception $ex){
             throw $e;
         }
+    }
+
+    public function renew($id){
+        $account = Account::find($id);
+        $check_loan_cycle = LoanCycle::where('account_id', $account->id)->orderBy('id', 'DESC')->first();
+        $loan_cycle = $check_loan_cycle->cycle_count;
+        if($account->loan_type->name === "Interest Only"){
+            $account_ammortization = $this->calculateammortization_interestonly($account->account_number);
+        }else if($account->loan_type->name === "Ammortized"){
+            $account_ammortization = $this->calculateammortization($account->account_number);
+        }
+
+        return redirect()->back();
+    }
+
+    public function payout($id, Request $request){
+        try{
+        $loan_cycle_update = LoanCycle::where('account_id', $id)->orderBy('id', 'DESC')->first();
+        $loan_cycle_update_data = LoanCycle::where('id', $loan_cycle_update->id)->update([
+            'total_cycle_payment' => $request->payout_amount
+        ]);
+            return redirect()->back();
+        }catch(\Exception $ex){
+            dd($ex);
+        }
+        // $account = Account::find($id);
+        // $check_loan_cycle = LoanCycle::where('account_id', $account->id)->orderBy('id', 'DESC')->first();
+        // $loan_cycle = $check_loan_cycle->cycle_count;
+        // if($account->loan_type->name === "Interest Only"){
+        //     $account_ammortization = $this->calculateammortization_interestonly($account->account_number);
+        // }else if($account->loan_type->name === "Ammortized"){
+        //     $account_ammortization = $this->calculateammortization($account->account_number);
+        // }
+
+        // return redirect()->back();
+    }
+
+    public function revert($id){
+        //get cycle
+        try{
+        DB::beginTransaction();
+        $loan_cycle = LoanCycle::where('account_id', $id)->orderBy('id', 'DESC')->first();
+        $loan_cycle_amount = $loan_cycle->amount;
+        $total_cycle_payment = $loan_cycle->total_cycle_payment;
+        $next_amount = $loan_cycle_amount - $total_cycle_payment;
+
+        $ammortization = AmmortizationSchedule::where('account_id', $id)->select([
+            DB::raw('SUM(balance) as balance')
+            ])->first();
+
+        $ammort_balance = $ammortization->balance;
+        $new_amount = $next_amount + $ammort_balance;
+
+        $loan_amount = LoanAmount::firstOrNew(['amount' => $new_amount]);
+        $loan_amount->amount = $new_amount;
+        $loan_amount->save(); 
+
+        $account = Account::find($id);
+        $account->account_status_id = 7;
+        $account->save();
+
+        $reverted_account = new Account($account->toArray());
+        $reverted_account->loan_amount = $new_amount;
+        $reverted_account->loan_amount_id = $loan_amount->id;
+        $reverted_account->approved_loan_amount = $new_amount;
+        $reverted_account->approved_load_amount_id = $loan_amount->id;
+        $reverted_account->account_status_id = 3;
+        $reverted_account->loan_type_id = 2;
+        $reverted_account->save();
+
+        $account_number = $this->accountNumber($reverted_account->id, 2);
+        $update = Account::find($reverted_account->id);
+        $update->account_number = $account_number;
+        $update->save();  
+
+        $calculate_ammortization = $this->calculateammortization_interestonly($account_number);
+
+        DB::commit();      
+
+        return redirect('/payment');
+        }catch(\Exception $ex){
+            DB::rollback();
+            dd($ex);
+        }
+    }
+
+    private function accountNumber($account_id, $loan_type_id){
+        if ($loan_type_id == 1) {
+            $prefix = 'A';
+        }else{
+            $prefix = 'I';
+        }
+        $account_id_length = strlen($account_id);
+       if($account_id_length < 10){
+        $account_number = $prefix.' - 0000000'.$account_id;
+       }elseif ($account_id_length < 100) {
+           $account_number = $prefix.' - 000000'.$account_id;
+       }elseif ($account_id_length < 1000){
+            $account_number = $prefix.' - 00000'.$account_id;
+       }elseif ($account_id_length < 10000) {
+           $account_number = $prefix.' - 0000'.$account_id;
+       }elseif ($account_id_length < 100000) {
+           $account_number = $prefix.' - 000'.$account_id;
+       }elseif ($account_id_length < 1000000) {
+           $account_number = $prefix.' - 00'.$account_id;
+       }
+       elseif ($account_id_length < 10000000) {
+           $account_number = $prefix.' - 0'.$account_id;
+       }else{
+            $account_number = $prefix.'-'.$account_id;
+       }
+
+       
+        return $account_number;
     }
 
 }

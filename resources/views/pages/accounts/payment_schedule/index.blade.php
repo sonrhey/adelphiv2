@@ -66,11 +66,11 @@
                                     <?php $count++; ?>
                                     <tr>
                                         <td>{{$count}}</td>
-                                        <td>&#8369; {{$am->due_ammount}}</td>
+                                        <td>&#8369; {{number_format($am->due_ammount, 2, '.', ',')}}</td>
                                         <td>{{$am->due_date}}</td>
-                                        <td>&#8369; {{$am->interest}}</td>
-                                        <td>&#8369; {{$am->principal}}</td>
-                                        <td>&#8369; {{$am->balance}}</td>
+                                        <td>&#8369; {{number_format($am->interest, 2, '.', ',')}}</td>
+                                        <td>&#8369; {{number_format($am->principal, 2, '.', ',')}}</td>
+                                        <td>&#8369; {{number_format($am->balance, 2, '.', ',')}}</td>
                                         <td><b>For Payment</b></td>
                                     </tr>
                                 @endforeach

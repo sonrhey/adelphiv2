@@ -15,6 +15,9 @@ use App\LoanType;
 use App\PropertyCollateral;
 use Carbon\Carbon;
 use App\AmmortizationSchedule;
+use App\LoanTracker;
+use App\LoanCycle;
+use DB;
 use Auth;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\Datatables;
@@ -94,6 +97,12 @@ class AccountController extends Controller
     public function edit($id)
     {
         $account = Account::find($id);
+        $view_name = "";
+        if($account->account_status_id == 4 || $account->account_status_id == 7){
+            $view_name = 'view';
+        }else{
+            $view_name = 'edit';
+        }
         $view_name = ($account->account_status_id == 3 || $account->account_status_id == 4) ? 'view' : 'edit' ;
         $clients = Client::all();
         $amounts = LoanAmount::all();
@@ -143,48 +152,137 @@ class AccountController extends Controller
     }
 
     private function calculateammortization_interestonly($accountnumber){
-        $getloanamount = Account::where('account_number', $accountnumber)->first();
-        $principal = $getloanamount->approved_loan_amount;
-        $interest = (double)$principal * 0.03;
+        try{
+            DB::beginTransaction();
+            $account = Account::where('account_number', $accountnumber)->first();
+            $loan_cycle = LoanCycle::where('account_id', $account->id)->orderBy('id', 'DESC')->first();
+            $loan_tracker = LoanTracker::where('account_id', $account->id)->first();
+            $i = 0;
+            $date_counter = 0;
+            $approvedamount = 0;
+            $month_payment_cycle = 1;
+            $month_cycle = 4;
+            $loan_term = 12;
+            $interest = 0.03;
 
-        $to_pay = 6;
-        $i=0;
+            //check if loan tracker table
+            if($loan_tracker == null){
+                $date_counter = 0;
+            }else{
+                $date_counter = $loan_tracker->cycle_counter;
+                $month_payment_cycle = $month_payment_cycle + $loan_tracker->month_cycle;
+                $month_cycle = $month_cycle + $loan_tracker->cycle_counter;
+            }
 
-        while($i<$to_pay){
-            $i++;
-            $date = Carbon::now();
-            $due_date = $this->get_monthly_dates($date, $i);
+            //check if loan tracker table
+            if($loan_cycle == null){
+                $approvedamount = $account->approved_loan_amount;
+            }else{
+                $loan_cycle_amount = $loan_cycle->amount;
+                $approvedamount = $loan_cycle_amount - $loan_cycle->total_cycle_payment;
+            }
 
-            $save_ammort = $this->save_ammortization($getloanamount->id, $due_date, $interest, $interest, $principal);
+            //get basic calculation
+            // $withoutInterest = (double)$account->approved_loan_amount / $loan_term;
+            $interest_value = (double)$approvedamount * $interest;
+            // $monthly_payment = $withoutInterest + $interest_value;
+            // $total_cycle_payment = $withoutInterest * 6;
+            $i = $date_counter;
+            //loop through months
+            while($i<$month_cycle){
+                $i++;
+                $date = Carbon::now();
+                $monthly_dates = $this->get_monthly_dates($date, $i); 
+                $ammortization = $this->save_ammortization($account->id, $monthly_dates, $interest_value, $interest_value, $approvedamount);
+            }
+
+            //loan tracker
+            $loan_tracker_insertOrUpdate = LoanTracker::firstOrNew(['account_id' => $account->id]);
+            $loan_tracker_insertOrUpdate->account_id = $account->id;
+            $loan_tracker_insertOrUpdate->month_cycle = $month_payment_cycle;
+            $loan_tracker_insertOrUpdate->cycle_counter = $i;
+            $loan_tracker_insertOrUpdate->save(); 
+
+            //loan cycle
+            $loan_cycle_insert = new LoanCycle();
+            $loan_cycle_insert->account_id = $account->id;
+            $loan_cycle_insert->amount = $approvedamount;
+            $loan_cycle_insert->cycle_count = $month_payment_cycle;
+            $loan_cycle_insert->total_cycle_payment = 0;
+            $loan_cycle_insert->cycle_status = 'ONGOING';
+            $loan_cycle_insert->save();
+
+            DB::commit();
+        }catch(\Exception $ex){
+            DB::rollback();
+            dd($ex);
         }
     }
 
     private function calculateammortization($accountnumber){
-        $getloanamount = Account::where('account_number', $accountnumber)->first();
-        $approvedamount = $getloanamount->approved_loan_amount;
-        $to_pay = 18;
-        $every18th = (double)$approvedamount / $to_pay; //6,111.11
+        try{
+            DB::beginTransaction();
+            $account = Account::where('account_number', $accountnumber)->first();
+            $loan_cycle = LoanCycle::where('account_id', $account->id)->first();
+            $loan_tracker = LoanTracker::where('account_id', $account->id)->first();
+            $date_counter = 0;
+            $approvedamount = 0;
+            $month_payment_cycle = 1;
 
-        $amount = $approvedamount;
-        $deduction = 0;
-        $i=0;
-
-        while($i<$to_pay){
-            $i++;
-            $date = Carbon::now();
-            $monthly_dates = $this->get_monthly_dates($date, $i);
-            if($i<=6){
-                $monthly_payment = $this->get_monthly($amount, $every18th);
+            //check if loan tracker table
+            if($loan_tracker == null){
+                $date_counter = 0;
             }else{
-                $deduction = $this->get_latest_amount($amount, $every18th);
-                $monthly_payment = $this->get_monthly($deduction, $every18th);
-                if($i%6 == 0){
-                    $amount = $deduction;
-                }
+                $date_counter = $loan_tracker->cycle_counter;
+                $month_payment_cycle = $month_payment_cycle + $loan_tracker->month_cycle;
             }
-            $deduction = ($deduction == 0) ? $amount : $deduction;    
-            
-            $ammortization = $this->save_ammortization($getloanamount->id, $monthly_dates, $monthly_payment[0], $monthly_payment[1], $approvedamount);
+
+            //check if loan tracker table
+            if($loan_cycle == null){
+                $approvedamount = $account->approved_loan_amount;
+            }else{
+                $loan_cycle_amount = $loan_cycle->amount;
+                $approvedamount = $loan_cycle_amount - $loan_cycle->total_cycle_payment;
+            }
+
+            //variables
+            $month_cycle = 6;
+            $loan_term = 18;
+            $interest = 0.02;
+
+            //get basic calculation
+            $withoutInterest = (double)$approvedamount / $loan_term;
+            $interest_value = (double)$approvedamount * $interest;
+            $monthly_payment = $withoutInterest + $interest_value;
+            $total_cycle_payment = $withoutInterest * $month_cycle;
+            $i = $date_counter;
+
+            //loop through months
+            while($i<$month_cycle){
+                $i++;
+                $date = Carbon::now();
+                $monthly_dates = $this->get_monthly_dates($date, $i); 
+                $ammortization = $this->save_ammortization($account->id, $monthly_dates, $monthly_payment, $interest_value, $approvedamount);
+            }
+            //loan tracker
+            $loan_tracker_insertOrUpdate = LoanTracker::firstOrNew(['account_id' => $account->id]);
+            $loan_tracker_insertOrUpdate->account_id = $account->id;
+            $loan_tracker_insertOrUpdate->month_cycle = $month_payment_cycle;
+            $loan_tracker_insertOrUpdate->cycle_counter = $i;
+            $loan_tracker_insertOrUpdate->save(); 
+            //loan cycle
+            $loan_cycle_insert = new LoanCycle();
+            $loan_cycle_insert->account_id = $account->id;
+            $loan_cycle_insert->amount = $approvedamount;
+            $loan_cycle_insert->cycle_count = $month_payment_cycle;
+            $loan_cycle_insert->total_cycle_payment = $total_cycle_payment;
+            $loan_cycle_insert->cycle_status = 'ONGOING';
+            $loan_cycle_insert->save();
+
+            DB::commit();
+        }catch(\Exception $ex){
+            DB::rollback();
+            dd($ex);
         }
     }
 
@@ -340,7 +438,7 @@ class AccountController extends Controller
     }
 
     public function approved_loan(){
-        $accounts = Account::select('mst_account.id', 'lt.name as type', 'mst_account.account_number', 'c.first_name', 'c.middle_name', 'c.last_name', 'b.name', 'st.name as status')->leftjoin('clients as c', 'mst_account.client_id', '=', 'c.id')->leftjoin('branches as b', 'mst_account.branch_id', '=', 'b.id')->leftjoin('account_status as st', 'mst_account.account_status_id', '=', 'st.id')->leftjoin('loan_types as lt', 'mst_account.loan_type_id', '=', 'lt.id')->where('mst_account.account_status_id', 3)->orWhere('mst_account.account_status_id', 4)->orderBy('mst_account.id', 'DESC');
+        $accounts = Account::select('mst_account.id', 'lt.name as type', 'mst_account.account_number', 'c.first_name', 'c.middle_name', 'c.last_name', 'b.name', 'st.name as status')->leftjoin('clients as c', 'mst_account.client_id', '=', 'c.id')->leftjoin('branches as b', 'mst_account.branch_id', '=', 'b.id')->leftjoin('account_status as st', 'mst_account.account_status_id', '=', 'st.id')->leftjoin('loan_types as lt', 'mst_account.loan_type_id', '=', 'lt.id')->whereIn('mst_account.account_status_id', [3,4,7])->orderBy('mst_account.id', 'DESC');
         return DataTables::of($accounts)
         ->addColumn('action', function ($accounts){
             return '<a class="btn btn-rounded btn-info btn-xs" href="payment/'.$accounts->id.'/pay-loan"><i class="fa fa-money"></i>Pay</a>';
@@ -350,5 +448,12 @@ class AccountController extends Controller
             return $full;
         })
         ->make(true);
+    }
+
+    public function close_account($id){
+        $account = Account::find($id);
+        $account->account_status_id = 7;
+        $account->save();
+        return redirect()->back();
     }
 }

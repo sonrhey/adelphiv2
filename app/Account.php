@@ -19,6 +19,10 @@ class Account extends Model
     	return $this->hasMany(AccountIdentification::class);
     }
 
+    public function status(){
+        return $this->belongsTo(AccountStatus::class, 'account_status_id', 'id');
+    }
+
     public function client(){
         return $this->belongsTo(client::class, 'client_id', 'id');
     }

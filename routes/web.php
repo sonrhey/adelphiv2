@@ -51,6 +51,7 @@ Route::group(['middleware' => ['auth', 'access']], function () {
 
 	/*Account*/
 	Route::get('accounts/get', 'AccountController@getAccounts');
+	Route::get('accounts/{id}/close-account', 'AccountController@close_account');
 	Route::get('accounts/approved-loan', 'AccountController@approved_loan');
 	Route::post('/accounts/store', 'AccountController@storeidentification');
 	Route::post('/accounts/{id}/accountloanprocess/updatestatus', 'AccountLoanProcessController@updatestatus');
@@ -70,6 +71,9 @@ Route::group(['middleware' => ['auth', 'access']], function () {
 
 	/*Payment*/
 	Route::get('/payment/{id}/pay-loan', 'PaymentController@edit');
+	Route::get('/payment/{id}/renew', 'PaymentController@renew');
+	Route::get('/payment/{id}/payout', 'PaymentController@payout');
+	Route::get('/payment/{id}/revert', 'PaymentController@revert');
 	Route::get('/payment/{id}/pay-schedules', 'PaymentController@payment_schedules');
 	Route::post('/payment/{id}/pay-loan', 'PaymentController@payment_loan');
 	/*End Payment*/

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubsidiaryLedger extends Model
 {
-    protected table = 'subsidiary_ledgers';
+    protected $table = 'subsidiary_ledgers';
     protected $guarded = [];
 
     public function transactionable()
