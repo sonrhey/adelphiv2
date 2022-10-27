@@ -1,6 +1,14 @@
 @extends('layouts.app')
 @section('title', 'Cheque Management')
     @section('content')
+    @if (\Session::has('success'))
+        <div class="alert alert-success alert-dismissible bg-success text-white border-0 fade show" role="alert">
+            <button type="button" class="btn btn-xs close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+            <strong>Success!</strong> {!! \Session::get('success') !!}
+        </div>
+    @endif
     <div class="card">
         <div class="card-body">
             <div class="container">
@@ -14,12 +22,12 @@
                             <th>(&#8369;) Cheque Amount</th>
                             <th>Action</th>
                         </tr>
-                    </thead>    
+                    </thead>
                 </table>
             </div>
         </div>
     </div>
-    
+
     <div class="modal fade" id="addcheque">
         <div class="modal-dialog">
             <div class="modal-content">

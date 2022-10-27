@@ -131,6 +131,15 @@ class ModuleTableSeeder extends Seeder
                 'sequence' => 9,
                 'visible' => 1,
             ],
+            [
+                'module_name' => 'Cheque Management',
+                'has_sub' => 0,
+                'routes' => 'chequemanagement',
+                'parent' => 1,
+                'icon' => NULL,
+                'sequence' => 9,
+                'visible' => 1,
+            ],
         ]);
     }
 }

@@ -14,19 +14,19 @@ use Yajra\DataTables\Facades\Datatables;
 class ModuleController extends Controller
 {
    public function index(){
-   	$user = Auth::id();         
+   	$user = Auth::id();
    	$submodule = Module::where('routes','!=','modules')
          ->where('routes','!=','addmodules')
          ->get();
    	return view ('Modules.module', compact('submodule','usertype'));
 
-   }  
+   }
    public function addmodules(){
       $id = Auth::user()->id;
       if ($id != 1) {
          abort(401, 'Access denied');
       }
-      
+
       return view ('pages.modules.index');
    }
    public function storemodules (Request $request){
@@ -110,7 +110,7 @@ class ModuleController extends Controller
       $usertype = UserType::all();
 
    	if($type == 1){
-   		
+
    		$addmodule = new Module;
    		$addmodule->module_name = $mname;
    		$addmodule->hasSubmodule = $subname;
@@ -164,14 +164,14 @@ class ModuleController extends Controller
                $sadmin->grant = 0;
                $sadmin->save();
             }
-         
+
    	   }
       }
    	return redirect('home');
    }
 
    public function usermaintenance (){
-      return view ('pages.user_maintenance.index');
+      return view('pages.user_maintenance.index');
    }
    public function editUser($id){
       $usertypeid = Auth::user()->user_type_id;
@@ -219,17 +219,17 @@ class ModuleController extends Controller
             $addnew->save();
          }
       }
-      
-      
+
+
 
    }
-   
+
    public function getUsers(){
       $get = User::with('user_type')->get();
       return Datatables::of($get)
          ->addColumn('action', function($users){
             return '<a class="btn btn-rounded btn-info btn-xs" href="usermaintenance/'.$users->id.'/edit"><i class="fa fa-edit"></i>Edit</a> <a class="btn btn-rounded btn-danger btn-xs" href="#" id="delete" data-id="'.$users->id.'"><i class="fa fa-trash"></i>Delete</a>';
-            
+
          })->make(true);
    }
    public function company(){

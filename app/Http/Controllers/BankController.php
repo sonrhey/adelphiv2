@@ -18,7 +18,6 @@ class BankController extends Controller
     public function index()
     {
         return view('pages.banks.index');
-        
     }
 
     /**
@@ -29,7 +28,7 @@ class BankController extends Controller
     public function create()
     {
         return view('pages.banks.create');
-        
+
     }
 
     /**
@@ -59,7 +58,6 @@ class BankController extends Controller
      */
     public function show($id)
     {
-
         $banks = Bank::find($id);
         return view('pages.banks.view',compact('id','banks'));
     }
@@ -72,7 +70,7 @@ class BankController extends Controller
      */
     public function edit($banks)
     {
-        $bank = Bank::find($banks);   
+        $bank = Bank::find($banks);
         return view('pages.banks.edit', compact('bank','banks'));
     }
 
@@ -85,7 +83,7 @@ class BankController extends Controller
      */
     public function update(Request $request, $banks)
     {
-        
+
 
         $bank = Bank::find($banks);
         $bank->code = $request->code;
@@ -111,7 +109,7 @@ class BankController extends Controller
         return Datatables::of($banks)
             ->addColumn('action', function($banks){
                 return '<a class="btn btn-rounded btn-success btn-xs" href="banks/'.$banks->id.'"><i class="fa fa-eye"></i>View</a><a class="btn btn-rounded btn-info btn-xs" href="banks/'.$banks->id.'/edit"><i class="fa fa-edit"></i>Edit</a> <a class="btn btn-rounded btn-danger btn-xs" href="#" id="delete" data-id="'.$banks->id.'" data-name="'.$banks->name.'"><i class="fa fa-trash"></i>Delete</a>';
-                // 
+                //
             })->make(true);
 
     }
@@ -119,5 +117,5 @@ class BankController extends Controller
         $get_banks = Bank::all();
         return response()->json($get_banks);
     }
-   
+
 }

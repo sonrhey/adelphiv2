@@ -21,7 +21,7 @@ Route::POST('storemodule','ModuleController@storemodules');
 Route::get('getparent/{id}','ModuleController@getparent');
 
 Route::group(['middleware' => ['auth', 'access']], function () {
-	
+
 	Route::get('usermaintenance',['as'=>'usermaintenance','uses'=>'ModuleController@usermaintenance']);
 	Route::get('usermaintenance/get','ModuleController@getUsers');
 	Route::get('usermaintenance/{id}/edit','ModuleController@editUser');
@@ -30,7 +30,7 @@ Route::group(['middleware' => ['auth', 'access']], function () {
 
 	Route::get('company',['as'=>'company','uses'=>'ModuleController@company']);
 	Route::get('company/newlink',['as'=>'company','uses'=>'ModuleController@test']);
-	
+
 	Route::get('/user_maintenance/getAccess/{user_id}', 'UsertypeController@getAccess');
 	Route::get('/user_maintenance/getusertype/{usertype_id}', 'UsertypeController@getusertypeid');
 
@@ -45,9 +45,13 @@ Route::group(['middleware' => ['auth', 'access']], function () {
 	Route::get('clients/{id}/viewfamily','ClientFamilyController@viewFamily');
 	Route::get('clients/{id}/viewbankaccount', 'BankAccountController@viewBank');
 	Route::post('/clients/client_list', 'ClientController@client_list');
+	Route::get('/clients/delete/{id}', 'ClientController@destroy');
+
+    Route::get('/family/delete/{id}', 'ClientFamilyController@destroy');
 
 	/*Banks*/
 	Route::post('banks/getlist', 'BankController@getlist');
+	Route::get('banks/get', 'BankController@getBanks');
 
 	/*Account*/
 	Route::get('accounts/get', 'AccountController@getAccounts');

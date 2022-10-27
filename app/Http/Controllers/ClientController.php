@@ -9,6 +9,7 @@ use App\Client;
 use App\Nationality;
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Yajra\DataTables\Facades\Datatables;
 class ClientController extends Controller
 {
@@ -19,7 +20,7 @@ class ClientController extends Controller
      */
     public function index()
     {
-        
+
         return view('pages.clients.index');
     }
 
@@ -31,7 +32,7 @@ class ClientController extends Controller
     public function create()
     {
         $civil_status = CivilStatus::all();
-        $nationality = Nationality::all();   
+        $nationality = Nationality::all();
         $civil_status = CivilStatus::all();
         $city = City::all();
         $barangay = Barangay::all();
@@ -49,7 +50,7 @@ class ClientController extends Controller
         // dd($request->civil_status_id);
         $client = new Client($request->all());
         $client->status = 'PENDING';
-        $client->added_by = Auth::user()->id; 
+        $client->added_by = Auth::user()->id;
         $client->save();
         return redirect('/clients/'.$client->id.'/edit')->with('message', 'New client has been successfully added.');
     }
@@ -74,8 +75,8 @@ class ClientController extends Controller
      */
     public function edit($id)
     {
-        $client = Client::find($id);   
-        $nationality = Nationality::all();   
+        $client = Client::find($id);
+        $nationality = Nationality::all();
         $civil_status = CivilStatus::all();
         $city = City::all();
         $barangay = Barangay::all();
@@ -95,7 +96,7 @@ class ClientController extends Controller
         $client = Client::findorFail($id);
         $client->fill($request->all());
         $client->status = 'PENDING';
-        $client->added_by = Auth::user()->id; 
+        $client->added_by = Auth::user()->id;
         $client->updated_by = Auth::user()->id;
         $client->save();
         return redirect('/clients/'.$client->id.'/edit')->with('message', 'New client has been successfully Updated.');
@@ -109,14 +110,16 @@ class ClientController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $client = Client::find($id)->delete();
+
+        return Redirect::back()->with('message', 'Client was deleted successfuly!');
     }
     public function getClients()
     {
         $clients = Client::all();
         return DataTables::of($clients)
         ->addColumn('action', function ($clients){
-            return '<a class="btn btn-rounded btn-success btn-xs" href="clients/'.$clients->id.'/view"><i class="fa fa-view"></i>View</a><a class="btn btn-rounded btn-info btn-xs" href="clients/'.$clients->id.'/edit"><i class="fa fa-edit"></i>Edit</a><a class="btn btn-rounded btn-danger btn-xs" href="#" id="delete" data-id="'.$clients->id.'"><i class="fa fa-delete"></i>Delete</a>';
+            return '<a class="btn btn-rounded btn-success btn-xs" href="clients/'.$clients->id.'/view"><i class="fa fa-view"></i>View</a><a class="btn btn-rounded btn-info btn-xs" href="clients/'.$clients->id.'/edit"><i class="fa fa-edit"></i>Edit</a><a class="btn btn-rounded btn-danger btn-xs" href="clients/delete/'.$clients->id.'" id="delete" data-id="'.$clients->id.'"><i class="fa fa-delete"></i>Delete</a>';
         })
         ->make(true);
     }

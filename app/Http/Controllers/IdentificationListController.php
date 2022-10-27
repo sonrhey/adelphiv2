@@ -14,8 +14,8 @@ class IdentificationListController extends Controller
     public function index()
     {
         //
-        return redirect()->back();
-        // return view('pages.identification_list.index');
+        // return redirect()->back();
+        return view('pages.identification_list.index');
     }
 
     /**

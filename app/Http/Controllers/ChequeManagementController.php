@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Account;
 use App\ChequeManagement;
 use DB;
+use Illuminate\Support\Facades\Redirect;
 use Yajra\DataTables\Facades\Datatables;
 
 class ChequeManagementController extends Controller
@@ -44,10 +45,10 @@ class ChequeManagementController extends Controller
             $cheque_management = new ChequeManagement($request->all());
             $cheque_management->save();
             DB::commit();
-            return redirect()->back();
+            return Redirect::back()->with('success', 'Cheque was Created successfully for client <b>'.$cheque_management->client_name->first_name.' '.$cheque_management->client_name->last_name.'</b>');
         }catch(\Exception $ex){
             DB::rollback();
-            dd($ex);
+            return Redirect::back()->withErrors(['msg' => 'Double check your fields before submitting.']);
         }
     }
 
@@ -68,7 +69,7 @@ class ChequeManagementController extends Controller
             })
             ->addColumn('action', function($cheques){
                 return '<a class="btn btn-rounded btn-info btn-xs btn-edit" href="#" data-cheque-id="'.$cheques->id.'"><i class="fa fa-edit"></i>Edit</a>';
-                // 
+                //
             })->make(true);
     }
 

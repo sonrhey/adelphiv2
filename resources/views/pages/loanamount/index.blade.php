@@ -20,7 +20,7 @@
                                 <th>Net Proceeds</th>
                                 <th>Action</th>
                             </tr>
-                        </thead>    
+                        </thead>
                     </table>
                 </div>
             </div>

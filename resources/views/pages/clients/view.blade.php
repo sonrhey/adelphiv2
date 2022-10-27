@@ -27,7 +27,7 @@
                             <div class="col-sm-4 my-1">
                                 <label>Civil Status</label>
                                 <input class="form-control" type="text" name="civil_status" readonly value="{{$client->civil_status->name}}">
-                               
+
                             </div>
                             <div class="col-sm-4 my-1">
                                 <label>Gender</label>
@@ -35,9 +35,9 @@
                                 <input class="form-control" type="text" name="gender" value="Male" readonly>
                                 @else
                                 <input class="form-control" type="text" name="gender" value="Female" readonly>
-                                
+
                                 @endif
-                                
+
                             </div>
                         </div>
                         <div class="form-row align-items-center">
@@ -80,21 +80,18 @@
                             <div class="col-sm-2 my-1">
                                 <label>City</label>
                                 <input class="form-control" type="text" name="address_1" readonly value="{{$client->city2->name}}">
-                                
+
                             </div>
                             <div class="col-sm-2 my-1">
                                 <label>Barangay</label>
                                 <input class="form-control" type="text" name="address_1" readonly value="{{$client->barangay2->name}}">
-                                
+
                             </div>
                             <div class="col-sm-2 my-1">
                                 <label>Length Stay</label>
                                 <input class="form-control" type="text" name="length_stay_2" readonly value="{{$client->length_stay_2}}">
                             </div>
-                        </div>  
-                        <div class="col-12">
-                                <a class="btn btn-danger float-left" href="{{URL::to('clients')}}">Back</a>
-                        </div>      
+                        </div>
                     </form>
                 </div>
             </div>
@@ -105,7 +102,7 @@
                 <div class="container">
                     <div class="clearfix">
                         <h3 class="header-title float-left">Family Member</h3>
-                        
+
                     </div>
                     <table class="table table-striped" id="tbl-family">
                         <thead>
@@ -124,7 +121,6 @@
                 <div class="container">
                     <div class="clearfix">
                         <h3 class="header-title float-left">Bank Accounts</h3>
-                        <a class="btn btn-success btn-xs float-right" href="bank_accounts/create">Add New</a>
                     </div>
                     <table class="table table-striped" id="tbl-bank">
                         <thead>
@@ -143,7 +139,6 @@
                 <div class="container">
                     <div class="clearfix">
                         <h3 class="header-title float-left">Employments</h3>
-                        <a class="btn btn-success btn-xs float-right" href="employments/create">Add New</a>
                     </div>
                     <table class="table table-striped" id="tbl-employment">
                         <thead>
@@ -167,7 +162,7 @@
 @section('custom_js')
     <script type="text/javascript">
       var APP_URL = {!! json_encode(url('/')) !!};
-      
+
     </script>
     <script src="{{ asset('js/datatables/jquery.dataTables.js') }}"></script>
     <script src="{{ asset('js/datatables/dataTables.bootstrap4.min.js') }}"></script>

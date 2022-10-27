@@ -54,7 +54,7 @@ class LoanAmountController extends Controller
      */
     public function show($id)
     {
-        
+
         //
     }
 
@@ -93,10 +93,16 @@ class LoanAmountController extends Controller
     }
 
     public function getloanamount(){
-        $loanamount = LoanAmount::select(['loan_amounts.id', 'loan_amounts.amount as amount', 'cd.id as cdid', 'cd.total_handling_fee as total_handling_fee','cd.total_notarial as total_notarial','cd.total_annotation as total_annotation','cd.total_deductions as total_deductions','cd.net_proceeds as net_proceeds', 'dl.location_name'])->join('charges_details as cd', 'loan_amounts.id', '=', 'cd.loan_amount_id')->join('deduction_locations as dl', 'cd.location_deduction_id', '=', 'dl.id');
+        $loanamount = LoanAmount::select(['loan_amounts.id', 'loan_amounts.amount as amount', 'cd.id as cdid', 'cd.total_handling_fee as total_handling_fee','cd.total_notarial as total_notarial','cd.total_annotation as total_annotation','cd.total_deductions as total_deductions','cd.net_proceeds as net_proceeds', 'dl.location_name'])->leftJoin('charges_details as cd', 'loan_amounts.id', '=', 'cd.loan_amount_id')->leftJoin('deduction_locations as dl', 'cd.location_deduction_id', '=', 'dl.id');
         return DataTables::of($loanamount)
         ->addColumn('action', function ($loanamount){
-            return '<a class="btn btn-rounded btn-success btn-xs" href="/loan_amount/'.$loanamount->id.'/deductions/'.$loanamount->cdid.'/view"><i class="fa fa-eye"></i>View</a> <a class="btn btn-rounded btn-info btn-xs" href="/loan_amount/'.$loanamount->id.'/deductions/'.$loanamount->cdid.'/edit"><i class="fa fa-edit"></i>Edit</a> <a class="btn btn-rounded btn-danger btn-xs" href="#" id="delete" data-id=""><i class="fa fa-trash"></i>Delete</a>';
+            $url = '';
+            if ($loanamount->cdid === null) {
+                $url = 'loan_amount/'.$loanamount->id.'/deductions/create';
+            } else {
+                $url = '/loan_amount/'.$loanamount->id.'/deductions/'.$loanamount->cdid.'/edit';
+            }
+            return '<a class="btn btn-rounded btn-success btn-xs" href="/loan_amount/'.$loanamount->id.'/deductions/'.$loanamount->cdid.'/view"><i class="fa fa-eye"></i>View</a> <a class="btn btn-rounded btn-info btn-xs" href="'.$url.'"><i class="fa fa-edit"></i>Edit</a> <a class="btn btn-rounded btn-danger btn-xs" href="#" id="delete" data-id=""><i class="fa fa-trash"></i>Delete</a>';
         })
         ->make(true);
     }

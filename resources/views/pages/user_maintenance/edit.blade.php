@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Edit User')
     @section('content')
-        
+
         <!-- Modal -->
         <div class="modal fade" id="approvemodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
@@ -39,7 +39,7 @@
                             <h4>User Access:</h4>
                         </div>
                     </div>
-                    
+
                     <!-- <form method="POST" action="store" id="user-form"> -->
                     <form  action="#" id="user-form">
                         @csrf
@@ -69,13 +69,13 @@
                                             @else
                                                 <option value="{{ $us->id }}"> {{ $us->name }}</option>
                                             @endif
-                                            
+
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
                             <div class="col-lg-6">
-                                
+
                                     @foreach($modules as $module)
                                         @if($module->parent == 0 && $module->has_sub == 0)
                                         <div class="custom-control custom-checkbox">
@@ -89,7 +89,7 @@
                                             @endif
                                         @endforeach
                                         </div>
-                                            
+
 @elseif($module->has_sub > 0 && $module->parent == 0)
 
     <div class="custom-control custom-checkbox">
@@ -97,8 +97,8 @@
         @if($ua->module_id == $module->id && $ua->grant == 1)
             <input type="checkbox" class="custom-control-input" name="hasSub" id="hasSub{{$module->id}}" value="{{$module->id}}" checked>
             <label class="custom-control-label" for="hasSub{{$module->id}}">{{ $module->name }}</label>
-            
-            <ul id="collapse">   
+
+            <ul id="collapse">
             @foreach($modules as $sub_module)
                 @if($sub_module->parent == $module->id)
                 <li>
@@ -121,8 +121,8 @@
         @elseif($ua->module_id == $module->id && $ua->grant == 0)
          <input type="checkbox" class="custom-control-input" name="hasSub" id="hasSub{{$module->id}}" value="{{$module->id}}">
             <label class="custom-control-label" for="hasSub{{$module->id}}">{{ $module->name }}</label>
-            
-            <ul id="collapse">   
+
+            <ul id="collapse">
             @foreach($modules as $sub_module)
                 @if($sub_module->parent == $module->id)
                 <li>
@@ -144,17 +144,17 @@
         </ul>
         @endif
     @endforeach
-        
-    </div>  
+
+    </div>
 @endif
 @endforeach
                                 </div>
-                            
+
                         </div>
-                            
+
                         <div class="col-12 my-1">
                                 <button class="btn btn-primary float-right" type="submit">Submit</button>
-                        </div>      
+                        </div>
                     </form>
                 </div>
             </div>

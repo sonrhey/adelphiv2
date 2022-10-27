@@ -11,6 +11,7 @@ use App\ClientRelation;
 use App\Nationality;
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Yajra\DataTables\Facades\Datatables;
 class ClientFamilyController extends Controller
 {
@@ -22,12 +23,17 @@ class ClientFamilyController extends Controller
     public function index($client)
     {
          $family = ClientFamily::leftjoin('client_relations as cr', 'client_family.client_relation_id', '=', 'cr.id')->select('client_family.id', 'client_family.first_name', 'client_family.middle_name', 'client_family.last_name', 'cr.name as relation')->where('client_id', $client);
-// dd($family);
         return DataTables::of($family)
         ->addColumn('action', function ($family)use ($client){
-            return '<a class="btn btn-rounded btn-info btn-xs" href="family/'.$family->id.'/edit"><i class="fa fa-edit"></i>Edit</a><a class="btn btn-rounded btn-danger btn-xs" href="#" id="delete" data-id="'.$family->id.'"><i class="fa fa-delete"></i>Delete</a>';
+            return '<a class="btn btn-rounded btn-info btn-xs" href="family/'.$family->id.'/edit"><i class="fa fa-edit"></i>Edit</a>
+            <form id="df" action="family/'.$family->id.'" method="POST">
+            <a class="btn btn-rounded btn-danger btn-xs" href="javascript:$(df).submit();" id="delete" data-id="'.$family->id.'"><i class="fa fa-delete"></i>Delete</a>
+
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+            </form>';
         })
-       
+
         ->make(true);
     }
 
@@ -40,7 +46,7 @@ class ClientFamilyController extends Controller
     {
         $this->clientExist($client);
         $relations = ClientRelation::all();
-        $nationality = Nationality::all();   
+        $nationality = Nationality::all();
         $civil_status = CivilStatus::all();
         $city = City::all();
         $barangay = Barangay::all();
@@ -59,7 +65,7 @@ class ClientFamilyController extends Controller
         $family->client_id = $client;
         $family->status = 1;
         $family->added_by = Auth::user()->id;
-       
+
         $family->save();
         return redirect('clients/'.$client.'/edit')->with('message', 'New family member successfully added.');
     }
@@ -72,7 +78,7 @@ class ClientFamilyController extends Controller
      */
     public function show($id,$famid)
     {
-        
+
         $family = ClientFamily::find($famid);
 
         return view('pages.clients.family.view',compact('family','id','famid'));
@@ -111,7 +117,7 @@ class ClientFamilyController extends Controller
         $family->updated_by = Auth::user()->id;
         $family->save();
         return redirect('/clients/'.$id.'/family/'.$family->id.'/edit')->with('message', 'New client has been successfully Updated.');
- 
+
     }
 
     /**
@@ -122,13 +128,14 @@ class ClientFamilyController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $client_fam = ClientFamily::find($id)->delete();
+        return Redirect::back()->with('message', 'Client Family was deleted successfuly!');
     }
     private function clientExist($client)
     {
         $client = Client::find($client);
         if (is_null($client)) {
-            abort(401, 'Access denied'); 
+            abort(401, 'Access denied');
         }
     }
     public function viewFamily($id){
@@ -137,8 +144,8 @@ class ClientFamilyController extends Controller
         ->addColumn('action', function ($family)use ($id){
             return '<a class="btn btn-rounded btn-success btn-xs" href="family/'.$family->id.'"><i class="fa fa-view"></i>View';
         })
-       
+
         ->make(true);
     }
-    
+
 }

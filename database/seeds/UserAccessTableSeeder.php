@@ -15,12 +15,12 @@ class UserAccessTableSeeder extends Seeder
         	[
         		'module_id' => 1,
 				'user_type_id' => 1,
-				'grant' => 1, 
+				'grant' => 1,
         	],
         	[
         		'module_id' => 2,
 				'user_type_id' => 1,
-				'grant' => 1, 
+				'grant' => 1,
         	],
             [
                 'module_id' => 3,
@@ -74,6 +74,11 @@ class UserAccessTableSeeder extends Seeder
             ],
             [
                 'module_id' => 13,
+                'user_type_id' => 1,
+                'grant' => 1,
+            ],
+            [
+                'module_id' => 14,
                 'user_type_id' => 1,
                 'grant' => 1,
             ],
