@@ -66,7 +66,7 @@
                                         @else
                                             <option value="{{$client->id}}">{{$client->first_name}} {{$client->middle_name}} {{$client->last_name}}</option>
                                         @endif
-                                        
+
                                     @endforeach
                                 </select>
                             </div>
@@ -80,7 +80,7 @@
                                         @else
                                             <option value="{{$amount->id}}">{{$amount->amount}}</option>
                                         @endif
-                                        
+
                                     @endforeach
                                 </select>
                             </div>
@@ -133,16 +133,16 @@
                                         @else
                                             <option value="{{$status->id}}">{{$status->name}}</option>
                                         @endif
-                                        
+
                                     @endforeach
                                 </select>
                             </div>
-                            
+
                         </div>
-                            
+
                         <div class="col-12 my-1">
                                 <button class="btn btn-primary float-right" type="submit">Submit</button>
-                        </div>      
+                        </div>
                     </form>
                 </div>
             </div>
@@ -209,7 +209,7 @@
                                 <select class="form-control" name="idlist">
                                     <option selected disabled>Select ID</option>
                                     @foreach($identificationlist as $il)
-                                        <option value="{{$il->id}}">{{$il->name}}</option>        
+                                        <option value="{{$il->id}}">{{$il->name}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -252,3 +252,4 @@
     <script src="{{asset('js/pages/accounts/payment_schedule/print.js')}}"></script>
     <script src="{{asset('js/pages/accounts/payment_schedule/schedules.js')}}"></script>
 @endsection
+

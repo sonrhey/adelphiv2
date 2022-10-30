@@ -20,7 +20,7 @@ class AccountIdentificationController extends Controller
         ->addColumn('action', function ($accountid){
             return '<a class="btn btn-rounded btn-danger btn-xs" href="identification/'.$accountid->id.'/destroy"><i class="fa fa-trash"></i> Remove</a>';
         })
-       
+
         ->make(true);
     }
 
@@ -85,8 +85,9 @@ class AccountIdentificationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($account_id, $identification_id)
     {
-        //
+       AccountIdentification::find($identification_id)->delete();
+       return redirect()->back();
     }
 }
