@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Account extends Model
 {
-    protected $table = 'mst_account'; 
+    protected $table = 'mst_account';
     protected $fillable = [
         'loan_amount_id', 'approved_load_amount_id','account_number','client_id','loan_amount','approved_loan_amount','loan_type_id','branch_id','account_status_id','added_by','updated_by','reviewed_by','appraised_by','approved_by','released_by'
     ];
@@ -24,7 +24,7 @@ class Account extends Model
     }
 
     public function client(){
-        return $this->belongsTo(client::class, 'client_id', 'id');
+        return $this->belongsTo(Client::class, 'client_id', 'id');
     }
 
     public function user(){
@@ -37,5 +37,9 @@ class Account extends Model
 
     public function loan_type(){
         return $this->belongsTo(LoanType::class, 'loan_type_id', 'id');
+    }
+
+    public function branch() {
+        return $this->belongsTo(Branch::class, 'branch_id', 'id');
     }
 }

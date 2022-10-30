@@ -21,7 +21,7 @@ var someTableDT = $("#some-table").on("draw.dt", function () {
 	$('[name="idlist"]').on('change', function(){
 		var idname = $('[name="idlist"] option:selected').text();
 		var id = this.value;
-		$('#idlistdata').append(`<tr><td>${idname}</td><td><div class="row"><div class="col-md-6"><input type="text" data-id="${id}" name="idnumber${id}" class="form-control identification"></div></div></td><td><a href="#" class="btn btn-danger btn-rounded btn-xs" id="remove"><span class="fa fa-trash"></span> Remove</a></td></tr>`);
+		$('#idlistdata').append(`<tr><td>${idname}</td><td><div class="row"><div class="col-md-6"><input type="number" data-id="${id}" name="idnumber${id}" class="form-control identification"></div></div></td><td><a href="#" class="btn btn-danger btn-rounded btn-xs" id="remove"><span class="fa fa-trash"></span> Remove</a></td></tr>`);
 		$(`[name="idnumber${id}"]`).focus();
 	});
 
@@ -46,9 +46,9 @@ var someTableDT = $("#some-table").on("draw.dt", function () {
 			});
 		});
 
-		$.ajax({ 
+		$.ajax({
 			headers:
-            {	
+            {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
 			type: 'post',
