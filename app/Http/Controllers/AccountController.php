@@ -46,7 +46,7 @@ class AccountController extends Controller
         //      return view('pages.accounts.create', compact('number'));
         // }else{
         //     $number = $this->accountNumber();
-            
+
         // }
         $clients = Client::all();
         $amounts = LoanAmount::all();
@@ -54,7 +54,7 @@ class AccountController extends Controller
         $branches = Branch::all();
         $statuses = AccountStatus::all();
         return view('pages.accounts.create', compact('clients', 'amounts', 'loan_types', 'branches', 'statuses'));
-       
+
     }
 
     /**
@@ -123,7 +123,7 @@ class AccountController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    { 
+    {
         try{
         $loan_amount = LoanAmount::find($request->loan_amount_id);
         $appr_loan_amount = ($request->approved_load_amount_id == null ) ? NULL : LoanAmount::find($request->approved_load_amount_id) ;
@@ -192,7 +192,7 @@ class AccountController extends Controller
             while($i<$month_cycle){
                 $i++;
                 $date = Carbon::now();
-                $monthly_dates = $this->get_monthly_dates($date, $i); 
+                $monthly_dates = $this->get_monthly_dates($date, $i);
                 $ammortization = $this->save_ammortization($account->id, $monthly_dates, $interest_value, $interest_value, $approvedamount);
             }
 
@@ -201,7 +201,7 @@ class AccountController extends Controller
             $loan_tracker_insertOrUpdate->account_id = $account->id;
             $loan_tracker_insertOrUpdate->month_cycle = $month_payment_cycle;
             $loan_tracker_insertOrUpdate->cycle_counter = $i;
-            $loan_tracker_insertOrUpdate->save(); 
+            $loan_tracker_insertOrUpdate->save();
 
             //loan cycle
             $loan_cycle_insert = new LoanCycle();
@@ -261,7 +261,7 @@ class AccountController extends Controller
             while($i<$month_cycle){
                 $i++;
                 $date = Carbon::now();
-                $monthly_dates = $this->get_monthly_dates($date, $i); 
+                $monthly_dates = $this->get_monthly_dates($date, $i);
                 $ammortization = $this->save_ammortization($account->id, $monthly_dates, $monthly_payment, $interest_value, $approvedamount);
             }
             //loan tracker
@@ -269,7 +269,7 @@ class AccountController extends Controller
             $loan_tracker_insertOrUpdate->account_id = $account->id;
             $loan_tracker_insertOrUpdate->month_cycle = $month_payment_cycle;
             $loan_tracker_insertOrUpdate->cycle_counter = $i;
-            $loan_tracker_insertOrUpdate->save(); 
+            $loan_tracker_insertOrUpdate->save();
             //loan cycle
             $loan_cycle_insert = new LoanCycle();
             $loan_cycle_insert->account_id = $account->id;
@@ -320,7 +320,7 @@ class AccountController extends Controller
             $ammortization->ammortization_schedule_status_id = 1;
             $ammortization->save();
         }catch(\Exception $ex){
-            throw $e;
+            throw $ex;
         }
     }
 
@@ -360,18 +360,14 @@ class AccountController extends Controller
             $account_number = $prefix.'-'.$account_id;
        }
 
-       
+
         return $account_number;
     }
     public function getAccounts(){
-        $accounts = Account::select('mst_account.id', 'lt.name as type', 'mst_account.account_number', 'c.first_name', 'c.middle_name', 'c.last_name', 'b.name', 'st.name as status')->leftjoin('clients as c', 'mst_account.client_id', '=', 'c.id')->leftjoin('branches as b', 'mst_account.branch_id', '=', 'b.id')->leftjoin('account_status as st', 'mst_account.account_status_id', '=', 'st.id')->leftjoin('loan_types as lt', 'mst_account.loan_type_id', '=', 'lt.id')->orderBy('mst_account.id', 'DESC');
+        $accounts = Account::with('client', 'branch', 'status', 'loan_type');
         return DataTables::of($accounts)
         ->addColumn('action', function ($accounts){
             return '<a class="btn btn-rounded btn-info btn-xs" href="accounts/'.$accounts->id.'/edit"><i class="fa fa-edit"></i>Edit</a>';
-        })
-        ->addColumn('fullname', function($accounts){
-            $full = $accounts->first_name.' '.$accounts->middle_name. ' '.$accounts->last_name;
-            return $full;
         })
         ->make(true);
     }
@@ -402,7 +398,7 @@ class AccountController extends Controller
             }else{
                 return 1;
             }
-            
+
         }catch(\Exception $e){
             // throw $e;
             abort(404, 'Item not Found!');
@@ -430,7 +426,7 @@ class AccountController extends Controller
             throw $e;
             // return "Unexpected Error Occured!";
         }
-        
+
     }
 
     private function processdash($id){
