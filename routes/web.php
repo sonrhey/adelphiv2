@@ -60,6 +60,7 @@ Route::group(['middleware' => ['auth', 'access']], function () {
 	Route::post('/accounts/store', 'AccountController@storeidentification');
 	Route::post('/accounts/{id}/accountloanprocess/updatestatus', 'AccountLoanProcessController@updatestatus');
 	Route::get('/accounts/{id}/accountloanprocess/payment-schedule', 'AccountLoanProcessController@payment_schedule');
+    Route::get('/accounts/{id}/identification/{ident}/destroy', 'AccountIdentificationController@destroy');
 	/*End Account*/
 
 	Route::get('nationality/get','NationalityController@getNationality');
