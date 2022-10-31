@@ -41,7 +41,7 @@
                     </div>
 
                     <!-- <form method="POST" action="store" id="user-form"> -->
-                    <form  action="#" id="user-form">
+                    <form action="#" id="user-form">
                         @csrf
                          <div class="row">
                             <div class="col-lg-6">
@@ -74,86 +74,12 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
-
-                                    @foreach($modules as $module)
-                                        @if($module->parent == 0 && $module->has_sub == 0)
-                                        <div class="custom-control custom-checkbox">
-                                        @foreach($useraccess as $ua)
-                                            @if($ua->module_id == $module->id && $ua->grant == 1)
-                                                <input type="checkbox" class="custom-control-input" name="isParent" id="isParent{{$module->id}}" value="{{ $module->id }}" checked>
-                                                <label class="custom-control-label" for="isParent{{$module->id}}">{{ $module->name }}</label>
-                                            @elseif($ua->module_id == $module->id && $ua->grant == 0)
-                                                <input type="checkbox" class="custom-control-input" name="isParent" id="isParent{{$module->id}}" value="{{ $module->id }}">
-                                                <label class="custom-control-label" for="isParent{{$module->id}}">{{ $module->name }}</label>
-                                            @endif
-                                        @endforeach
-                                        </div>
-
-@elseif($module->has_sub > 0 && $module->parent == 0)
-
-    <div class="custom-control custom-checkbox">
-    @foreach($useraccess as $ua)
-        @if($ua->module_id == $module->id && $ua->grant == 1)
-            <input type="checkbox" class="custom-control-input" name="hasSub" id="hasSub{{$module->id}}" value="{{$module->id}}" checked>
-            <label class="custom-control-label" for="hasSub{{$module->id}}">{{ $module->name }}</label>
-
-            <ul id="collapse">
-            @foreach($modules as $sub_module)
-                @if($sub_module->parent == $module->id)
-                <li>
-                    <div class="custom-control custom-checkbox">
-                    @foreach($useraccess as $uaa)
-                    @if($uaa->module_id == $sub_module->id && $uaa->grant == 1)
-                        <input type="checkbox" class="custom-control-input" name="subModule" id="subModule{{$sub_module->id}}" data-id="sub{{$module->id}}" value="{{$sub_module->id}}" checked>
-                        <label class="custom-control-label" for="subModule{{$sub_module->id}}">{{ $sub_module->name }}</label>
-                    @elseif($uaa->module_id == $sub_module->id && $uaa->grant == 0)
-                        <input type="checkbox" class="custom-control-input" name="subModule" id="subModule{{$sub_module->id}}" data-id="sub{{$module->id}}" value="{{$sub_module->id}}">
-                        <label class="custom-control-label" for="subModule{{$sub_module->id}}">{{ $sub_module->name }}</label>
-                    @endif
-                    @endforeach
-                    </div>
-                <li>
-
-                @endif
-            @endforeach
-        </ul>
-        @elseif($ua->module_id == $module->id && $ua->grant == 0)
-         <input type="checkbox" class="custom-control-input" name="hasSub" id="hasSub{{$module->id}}" value="{{$module->id}}">
-            <label class="custom-control-label" for="hasSub{{$module->id}}">{{ $module->name }}</label>
-
-            <ul id="collapse">
-            @foreach($modules as $sub_module)
-                @if($sub_module->parent == $module->id)
-                <li>
-                    <div class="custom-control custom-checkbox">
-                    @foreach($useraccess as $uaa)
-                    @if($uaa->module_id == $sub_module->id && $uaa->grant == 1)
-                        <input type="checkbox" class="custom-control-input" name="subModule" id="subModule{{$sub_module->id}}" data-id="sub{{$module->id}}" value="{{$sub_module->id}}" checked>
-                        <label class="custom-control-label" for="subModule{{$sub_module->id}}">{{ $sub_module->name }}</label>
-                    @elseif($uaa->module_id == $sub_module->id && $uaa->grant == 0)
-                        <input type="checkbox" class="custom-control-input" name="subModule" id="subModule{{$sub_module->id}}" data-id="sub{{$module->id}}" value="{{$sub_module->id}}">
-                        <label class="custom-control-label" for="subModule{{$sub_module->id}}">{{ $sub_module->name }}</label>
-                    @endif
-                    @endforeach
-                    </div>
-                <li>
-
-                @endif
-            @endforeach
-        </ul>
-        @endif
-    @endforeach
-
-    </div>
-@endif
-@endforeach
-                                </div>
-
+                            <div class="col-lg-6 user-access">
+                                @include('pages.user_maintenance.user_access')
+                            </div>
                         </div>
-
                         <div class="col-12 my-1">
-                                <button class="btn btn-primary float-right" type="submit">Submit</button>
+                            <button class="btn btn-primary float-right" type="submit">Submit</button>
                         </div>
                     </form>
                 </div>

@@ -28,6 +28,10 @@ Route::group(['middleware' => ['auth', 'access']], function () {
 	Route::POST('usermaintenance/{id}/store','ModuleController@storeUser');
 	Route::POST('usermaintenance/{id}/storeaccess','ModuleController@storeAccessUser');
 
+	Route::get('usermaintenance/create_new_user','ModuleController@create_new_user');
+    Route::post('usermaintenance/store_user','ModuleController@store_user');
+    Route::delete('usermaintenance/{id}/delete_user','ModuleController@delete_user');
+
 	Route::get('company',['as'=>'company','uses'=>'ModuleController@company']);
 	Route::get('company/newlink',['as'=>'company','uses'=>'ModuleController@test']);
 

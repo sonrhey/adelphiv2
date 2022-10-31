@@ -5,7 +5,7 @@
             <div class="card-body">
                 <div class="container">
                     <div class="clearfix">
-                        <a class="btn btn-success mb-5 float-right" href="{{URL('accounts/create')}}">Add New</a>
+                        <a class="btn btn-success mb-5 float-right" href="{{URL('usermaintenance/create_new_user')}}">Add New</a>
                     </div>
                     <table class="table table-bordered datatables" id="tbl-users">
                         <thead>
