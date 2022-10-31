@@ -107,6 +107,9 @@ Route::group(['middleware' => ['auth', 'access']], function () {
     Route::get('industry/get_all', 'IndustryController@get_all');
     Route::get('industry/{id}/delete_industry', 'IndustryController@destroy');
 
+    /*Identification List */
+    Route::get('identification_list/get_all', 'IdentificationListController@get_all');
+
 	/*Resource routes goes here*/
 	Route::resource('clients', 'ClientController');
 	Route::resource('clients.family', 'ClientFamilyController');
