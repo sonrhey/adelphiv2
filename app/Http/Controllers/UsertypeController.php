@@ -14,7 +14,6 @@ use App\module;
 class UsertypeController extends Controller
 {
     public function index(){
-        // dd('eheh');
         $access = useraccess::all();
 
         $user = Auth::id();
@@ -30,9 +29,9 @@ class UsertypeController extends Controller
 
     }
     public function store(Request $request){
-      
+
             $usertypename = $request->typename;
-            
+
             $addusertype = new usertype;
             $addusertype->name = $usertypename;
             $addusertype->save();
@@ -40,20 +39,20 @@ class UsertypeController extends Controller
 
             $modules = modules::all();
             foreach ($modules as $m) {
-               
+
                 $newua = new useraccess;
                 $newua->module_id = $m->id;
                 $newua->user_type_id = $usertypeid;
                 $newua->grant = 0;
-                $newua->save(); 
-                            
+                $newua->save();
+
             }
 
     }
 
     public function getAccess($id){
-        
-        $modules = modules::all();  
+
+        $modules = modules::all();
         $typeAccess = DB::table('user_access as u')
             ->select([
                 'm.id',
@@ -74,7 +73,7 @@ class UsertypeController extends Controller
         // dd($typeAccess);
 
         $result = '';
-        $optionalItem = '';        
+        $optionalItem = '';
         $checked = '';
         $mchecked = '';
 
@@ -85,24 +84,24 @@ class UsertypeController extends Controller
                     $checked = "checked";
                 }else{
                     $checked = "";
-                } 
+                }
                $optionalItem .= '
-               <div class="container"                
+               <div class="container"
                     <label>
                         <input type="checkbox" '.$checked.' name="parentmodule" value='.$taccess->id.' id='.$id.' class="parentm">'.$taccess->module_name.'
-                    </label> 
+                    </label>
 
-                </div>';   
-                         
+                </div>';
+
            }else if($taccess->parent == 0 && $taccess->hasSubmodule == 1){
                 if ($taccess->grant == 1) {
                     $checked = "checked";
                 }else{
                     $checked = "";
-                } 
-                $optionalItem .='<div class="container"> 
+                }
+                $optionalItem .='<div class="container">
                                     <label data-toggle="collapse" data-target="#'.$taccess->routes.'" >
-                                        <input type="checkbox" '.$checked.' value='.$taccess->id.' name="parentsub" class="parentsub" id='.$id.' aria-expanded="false">'.$taccess->module_name.' 
+                                        <input type="checkbox" '.$checked.' value='.$taccess->id.' name="parentsub" class="parentsub" id='.$id.' aria-expanded="false">'.$taccess->module_name.'
                                     </label>
                                 </div>';
 
@@ -114,26 +113,26 @@ class UsertypeController extends Controller
                             $mchecked = "checked";
                         }else{
                             $mchecked = "";
-                        } 
+                        }
                         $optionalItem .='<div class="container">
-                            <label> 
+                            <label>
                                 <input type="checkbox" '.$mchecked.' name="sub" value='.$sub->id.' id='.$id.' class="subm" >'.$sub->module_name.'
                             </label>
                         </div>';
                     }
                 }
                 $optionalItem .='</div';
-           }    
-            
-       }     
+           }
+
+       }
         return $optionalItem;
 
 
-    }    
+    }
 
     public function editusertypes(Request $request){
         $module_id = $request->moduleid;
-        $usertype_id = $request->usertypeid;               
+        $usertype_id = $request->usertypeid;
         $checked = $request->checked;
 
         $first = useraccess::where('module_id',$module_id)
@@ -151,35 +150,35 @@ class UsertypeController extends Controller
                 $newua->module_id = $module_id;
                 $newua->user_type_id = $usertype_id;
                 $newua->grant = 0;
-                $newua->save(); 
+                $newua->save();
             }
-            
-        }else{        
-        
-            if ($checked == "checked") {         
+
+        }else{
+
+            if ($checked == "checked") {
                 $edituseraccess = useraccess::where('module_id',$module_id)
                     ->where('user_type_id',$usertype_id)
-                    ->get();            
-                
-             
+                    ->get();
+
+
                     foreach ($edituseraccess as $eua) {
                         $id = $eua->id;
                         $editua = useraccess::find($id);
                         $editua->grant = 1;
-                        $editua->save();   
-                    }                          
+                        $editua->save();
+                    }
             }else{
                 $edituseraccess = useraccess::where('module_id',$module_id)
                     ->where('user_type_id',$usertype_id)
-                    ->get();                  
-                
-                    foreach ($edituseraccess as $neua){               
+                    ->get();
+
+                    foreach ($edituseraccess as $neua){
                         $id1 = $neua->id;
                         $neditua = useraccess::find($id1);
                         $neditua->grant = 0;
-                        $neditua->save();          
-                    
-                    }     
+                        $neditua->save();
+
+                    }
             }
         }
     }
@@ -190,9 +189,9 @@ class UsertypeController extends Controller
     }
 
     public function deleteusertypes(Request $request){
-     
+
         $userid = $request->userid;
-     
+
         $deleteusertype = usertype::find($userid);
         $deleteusertype->delete();
 
@@ -204,5 +203,5 @@ class UsertypeController extends Controller
 
     }
 
- 	
+
 }

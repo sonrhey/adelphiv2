@@ -21,7 +21,7 @@
                                 <select class="form-control" required name="loan_amount_id">
                                     <option value="" selected>Select Amount</option>
                                     @foreach($amounts as $amount)
-                                        <option value="{{$amount->id}}">{{$amount->amount}}</option>
+                                        <option value="{{$amount->id}}">PHP {{number_format($amount->amount, 2, ".", ",")}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -43,12 +43,12 @@
                                     @endforeach
                                 </select>
                             </div>
-                            
+
                         </div>
-                            
+
                         <div class="col-12 my-1">
                                 <button class="btn btn-primary float-right" type="submit">Submit</button>
-                        </div>      
+                        </div>
                     </form>
                 </div>
             </div>

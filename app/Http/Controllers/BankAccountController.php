@@ -17,12 +17,17 @@ class BankAccountController extends Controller
      */
     public function index($client)
     {
-        $bank = ClientBank::leftjoin('banks as b', 'client_bank.bank_id', '=', 'b.id')->where('client_id', $client);
+        $bank = ClientBank::with('bankName')->where('client_id', $client);
         return DataTables::of($bank)
         ->addColumn('action', function ($bank)use ($client){
-            return '<a class="btn btn-rounded btn-info btn-xs" href="bank_accounts/'.$bank->id.'/edit"><i class="fa fa-edit"></i>Edit</a><a class="btn btn-rounded btn-danger btn-xs" href="#" id="delete" data-id="'.$bank->id.'"><i class="fa fa-delete"></i>Delete</a>';
+            return '<a class="btn btn-rounded btn-info btn-xs" href="bank_accounts/'.$bank->id.'/edit"><i class="fa fa-edit"></i>Edit</a>
+            <form id="df" action="bank_accounts/'.$bank->id.'" method="POST">
+            <a class="btn btn-rounded btn-danger btn-xs" href="javascript:$(df).submit();" id="delete" data-id="'.$bank->id.'"><i class="fa fa-delete"></i>Delete</a>
+
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="hidden" name="_token" value="'.csrf_token().'">
+            </form>';
         })
-       
         ->make(true);
     }
 
@@ -101,9 +106,10 @@ class BankAccountController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id, $bank_id)
     {
-        //
+       ClientBank::find($bank_id)->delete();
+       return redirect()->back()->with('message', 'Client Bank was deleted successfuly!');
     }
     public function viewBank($id){
         $bank = Client::leftjoin('client_bank as cb', 'clients.id', '=', 'cb.client_id')

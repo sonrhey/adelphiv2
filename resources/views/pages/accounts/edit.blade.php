@@ -76,9 +76,9 @@
                                     <option value="" selected>Select Amount</option>
                                     @foreach($amounts as $amount)
                                         @if($account->loan_amount_id == $amount->id)
-                                            <option value="{{$amount->id}}" selected>{{$amount->amount}}</option>
+                                            <option value="{{$amount->id}}" selected>PHP {{number_format($amount->amount, 2, ".", ",")}}</option>
                                         @else
-                                            <option value="{{$amount->id}}">{{$amount->amount}}</option>
+                                            <option value="{{$amount->id}}">PHP {{number_format($amount->amount, 2, ".", ",")}}</option>
                                         @endif
 
                                     @endforeach
@@ -90,9 +90,9 @@
                                     <option value="" selected>Select Approved Amount</option>
                                     @foreach($amounts as $amount)
                                         @if($amount->id == $account->approved_load_amount_id)
-                                            <option value="{{$amount->id}}" selected>{{$amount->amount}}</option>
+                                            <option value="{{$amount->id}}" selected>PHP {{number_format($amount->amount, 2, ".", ",")}}</option>
                                         @else
-                                            <option value="{{$amount->id}}">{{$amount->amount}}</option>
+                                            <option value="{{$amount->id}}">PHP {{number_format($amount->amount, 2, ".", ",")}}</option>
                                         @endif
                                     @endforeach
                                 </select>

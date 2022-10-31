@@ -89,7 +89,8 @@ class LoanAmountController extends Controller
      */
     public function destroy($id)
     {
-        //
+        LoanAmount::find($id)->delete();
+        return back()->with('message', 'Record Successfully Deleted!');
     }
 
     public function getloanamount(){
@@ -97,12 +98,19 @@ class LoanAmountController extends Controller
         return DataTables::of($loanamount)
         ->addColumn('action', function ($loanamount){
             $url = '';
+            $view_url = '';
             if ($loanamount->cdid === null) {
                 $url = 'loan_amount/'.$loanamount->id.'/deductions/create';
             } else {
                 $url = '/loan_amount/'.$loanamount->id.'/deductions/'.$loanamount->cdid.'/edit';
+                $view_url = '<a class="btn btn-rounded btn-success btn-xs" href="/loan_amount/'.$loanamount->id.'/deductions/'.$loanamount->cdid.'/view"><i class="fa fa-eye"></i>View</a>  ';
             }
-            return '<a class="btn btn-rounded btn-success btn-xs" href="/loan_amount/'.$loanamount->id.'/deductions/'.$loanamount->cdid.'/view"><i class="fa fa-eye"></i>View</a> <a class="btn btn-rounded btn-info btn-xs" href="'.$url.'"><i class="fa fa-edit"></i>Edit</a> <a class="btn btn-rounded btn-danger btn-xs" href="#" id="delete" data-id=""><i class="fa fa-trash"></i>Delete</a>';
+            return '
+            <div class="btn-group" role="group" aria-label="Basic example">
+                '.$view_url.'
+                <a class="btn btn-rounded btn-info btn-xs" href="'.$url.'"><i class="fa fa-edit"></i>Edit</a>
+                <a class="btn btn-rounded btn-danger btn-xs" href="loan_amount/'.$loanamount->id.'/deleteloanamount" id="delete" data-id=""><i class="fa fa-trash"></i>Delete</a>
+            </div>';
         })
         ->make(true);
     }

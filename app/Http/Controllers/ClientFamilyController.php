@@ -30,7 +30,7 @@ class ClientFamilyController extends Controller
             <a class="btn btn-rounded btn-danger btn-xs" href="javascript:$(df).submit();" id="delete" data-id="'.$family->id.'"><i class="fa fa-delete"></i>Delete</a>
 
             <input type="hidden" name="_method" value="DELETE">
-            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="_token" value="'.csrf_token().'">
             </form>';
         })
 
@@ -128,7 +128,7 @@ class ClientFamilyController extends Controller
      */
     public function destroy($id)
     {
-        $client_fam = ClientFamily::find($id)->delete();
+        ClientFamily::find($id)->delete();
         return Redirect::back()->with('message', 'Client Family was deleted successfuly!');
     }
     private function clientExist($client)

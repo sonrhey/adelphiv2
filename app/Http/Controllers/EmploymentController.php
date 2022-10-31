@@ -24,9 +24,15 @@ class EmploymentController extends Controller
          ->where('client_id', $client);
         return DataTables::of($employment)
         ->addColumn('action', function ($employment)use ($client){
-            return '<a class="btn btn-rounded btn-info btn-xs" href="employments/'.$employment->id.'/edit"><i class="fa fa-edit"></i>Edit</a><a class="btn btn-rounded btn-danger btn-xs" href="#" id="delete" data-id="'.$employment->id.'"><i class="fa fa-delete"></i>Delete</a>';
+            return '<a class="btn btn-rounded btn-info btn-xs" href="employments/'.$employment->id.'/edit"><i class="fa fa-edit"></i>Edit</a>
+            <form id="df" action="employments/'.$employment->id.'" method="POST">
+            <a class="btn btn-rounded btn-danger btn-xs" href="javascript:$(df).submit();" id="delete" data-id="'.$employment->id.'"><i class="fa fa-delete"></i>Delete</a>
+
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="hidden" name="_token" value="'.csrf_token().'">
+            </form>';
         })
-       
+
         ->make(true);
     }
 
@@ -113,8 +119,9 @@ class EmploymentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id, $client_employment_id)
     {
-        //
+        ClientEmployment::find($client_employment_id)->delete();
+        return redirect()->back()->with('message', 'Client Employment was deleted successfuly!');
     }
 }

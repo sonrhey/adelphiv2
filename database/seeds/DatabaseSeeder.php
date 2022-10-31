@@ -37,5 +37,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PropertyTypeTableSeeder::class);
         $this->call(LoanProcessTableSeeder::class);
         $this->call(AmmortizationStatusTableSeeder::class);
+        $this->call(IndustryModuleSeeder::class);
+        $this->call(IndustryUserAccessSeeder::class);
     }
 }
