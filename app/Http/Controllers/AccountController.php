@@ -40,14 +40,6 @@ class AccountController extends Controller
      */
     public function create()
     {
-        // $number = $this->accountNumber();
-        // $check = Account::where('account_number', $check);
-        // if (is_null($check)) {
-        //      return view('pages.accounts.create', compact('number'));
-        // }else{
-        //     $number = $this->accountNumber();
-
-        // }
         $clients = Client::all();
         $amounts = LoanAmount::all();
         $loan_types = LoanType::all();

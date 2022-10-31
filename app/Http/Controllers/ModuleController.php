@@ -228,7 +228,16 @@ class ModuleController extends Controller
       $get = User::with('user_type')->get();
       return Datatables::of($get)
          ->addColumn('action', function($users){
-            return '<a class="btn btn-rounded btn-info btn-xs" href="usermaintenance/'.$users->id.'/edit"><i class="fa fa-edit"></i>Edit</a> <a class="btn btn-rounded btn-danger btn-xs" href="#" id="delete" data-id="'.$users->id.'"><i class="fa fa-trash"></i>Delete</a>';
+            return '
+            <div class="d-flex">
+                <a class="btn btn-rounded btn-info btn-xs" href="usermaintenance/'.$users->id.'/edit"><i class="fa fa-edit"></i>Edit</a>
+                <form id="df" action="usermaintenance/'.$users->id.'/delete_user" method="POST">
+                <a class="btn btn-rounded btn-danger btn-xs" href="javascript:$(df).submit();" id="delete" data-id="'.$users->id.'"><i class="fa fa-delete"></i>Delete</a>
+
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="hidden" name="_token" value="'.csrf_token().'">
+                </form>
+            </div>';
 
          })->make(true);
    }
@@ -238,5 +247,24 @@ class ModuleController extends Controller
 
    public function test (){
       return view ('test');
+   }
+
+   public function create_new_user() {
+    $usertype = UserType::all();
+    return view('pages.user_maintenance.create', compact('usertype'));
+   }
+
+   public function store_user(Request $request) {
+    $user = new User($request->all());
+    $user->password = bcrypt($request->password);
+    $user->save();
+
+    return back()->with('message', 'User Successfully Created!');
+   }
+
+   public function delete_user($id) {
+    User::find($id)->delete();
+
+    return back()->with('message', 'User Successfully Deleted!');
    }
 }

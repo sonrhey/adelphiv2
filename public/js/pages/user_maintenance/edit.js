@@ -7,7 +7,7 @@ $(document).ready(function(){
 			var id = $(this).val();
 			console.log(id);
 			if ($(this).prop("checked")) {
-				
+
 				$('input[data-id=sub'+id+']').prop("checked",true);
 			}else{
 				$('input[data-id=sub'+id+']').prop("checked",false);
@@ -15,12 +15,18 @@ $(document).ready(function(){
 
 		});
 	}
-	$('#user-form').submit(function(e){
+	$('#user-form').on('submit', function(e){
 		e.preventDefault();
+        let number_of_uaccess = $('.user-access').find('input:checkbox').length;
+        let iteration_count = 0;
+
+        showLoading();
+
 		var first_name = $('input[name=first_name]').val();
 		var last_name = $('input[name=last_name]').val();
 		var username = $('input[name=username]').val();
 		var usertypeid = $('select[name=user_type_id]').val();
+
 		$.ajax({
 			headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
 			method:'POST',
@@ -29,7 +35,8 @@ $(document).ready(function(){
 			success:function(data){
 			}
 		});
-		$('input[type=checkbox]').each(function(){
+
+		$('.user-access').find('input:checkbox').each(function(){
 			var id = $(this).val();
 			var check = 0;
 			if ($(this).prop("checked")) {
@@ -43,11 +50,20 @@ $(document).ready(function(){
 				url: 'storeaccess',
 				data: {id:id, check:check},
 				success:function(data){
-					location.reload();
+					iteration_count += 1;
+                    if (number_of_uaccess === iteration_count) {
+                        location.reload();
+                    }
 				}
 		});
-			
+
 		});
 
 	});
 });
+
+const showLoading = () => {
+    $('html, body').loadingOverlay(true, {
+        backgroundColor: 'rgba(0,0,0,0.65)',
+    });
+}

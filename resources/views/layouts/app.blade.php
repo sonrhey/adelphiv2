@@ -29,6 +29,7 @@
     <link rel="stylesheet" href="{{asset('template_styles/css/styles.css')}}">
     <link rel="stylesheet" href="{{asset('template_styles/css/responsive.css')}}">
     <link rel="stylesheet" href="{{ asset('css/bootstrap-select.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('loading-plugin/loading-overlay.jquery.css') }}">
     <!-- modernizr css -->
     <script src="{{asset('template_styles/js/vendor/modernizr-2.8.3.min.js')}}"></script>
 
@@ -241,6 +242,7 @@
     </div>
 
     <script src="{{asset('js/jquery.js')}}"></script>
+    <script src="{{asset('loading-plugin/loading-overlay.jquery.js')}}"></script>
     <script src="{{asset('template_styles/js/popper.min.js')}}"></script>
     <script src="{{asset('template_styles/js/bootstrap.min.js')}}"></script>
     <script src="{{asset('template_styles/js/owl.carousel.min.js')}}"></script>
