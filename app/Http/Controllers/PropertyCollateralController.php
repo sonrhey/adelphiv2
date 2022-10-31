@@ -19,15 +19,15 @@ class PropertyCollateralController extends Controller
      */
     public function index($accounts)
     {
-        // $proprties = PropertyCollateral::leftjoin('cities as c', 'property_collaterals.city_id', '=', 'c.id')->leftjoin('barangays as b', 'property_collaterals.barangay_id', '=', 'b.id'); 
+        // $proprties = PropertyCollateral::leftjoin('cities as c', 'property_collaterals.city_id', '=', 'c.id')->leftjoin('barangays as b', 'property_collaterals.barangay_id', '=', 'b.id');
          $properties = PropertyCollateral::where('account_id', $accounts);
         return DataTables::of($properties)
         ->addColumn('action', function ($properties)use ($accounts){
             return '<a class="btn btn-rounded btn-info btn-xs" href="property_collaterals/'.$properties->id.'/edit"><i class="fa fa-edit"></i>Edit</a>';
         })
-       
+
         ->make(true);
-        
+
     }
 
     /**
@@ -51,7 +51,7 @@ class PropertyCollateralController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, $accounts)
-    {   
+    {
         try{
             $property_collateral = new PropertyCollateral($request->all());
             $property_collateral->account_id = $accounts;
@@ -83,7 +83,11 @@ class PropertyCollateralController extends Controller
     public function edit($accounts, $id)
     {
         $property = PropertyCollateral::find($id);
-        return view('pages.property_collaterals.edit', compact('property', 'accounts', 'id'));
+        $property_types = PropertyType::all();
+        $unit_measures = UnitOfMeasure::all();
+        $barangays = Barangay::all();
+        $cities = City::all();
+        return view('pages.property_collaterals.edit', compact('property', 'accounts', 'id', 'property_types', 'unit_measures', 'barangays', 'cities'));
     }
 
     /**
@@ -93,8 +97,13 @@ class PropertyCollateralController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, $collateral_id)
     {
+        $property_collateral = PropertyCollateral::find($collateral_id);
+        $property_collateral_input = $request->all();
+        $property_collateral->fill($property_collateral_input)->save();
+
+        return back()->with('message', 'Record Successfully Updated!');
         //
     }
 

@@ -56,6 +56,7 @@ Route::group(['middleware' => ['auth', 'access']], function () {
 	/*Account*/
 	Route::get('accounts/get', 'AccountController@getAccounts');
 	Route::get('accounts/{id}/close-account', 'AccountController@close_account');
+	Route::get('accounts/{id}/deleteaccount', 'AccountController@destroy');
 	Route::get('accounts/approved-loan', 'AccountController@approved_loan');
 	Route::post('/accounts/store', 'AccountController@storeidentification');
 	Route::post('/accounts/{id}/accountloanprocess/updatestatus', 'AccountLoanProcessController@updatestatus');
@@ -70,6 +71,7 @@ Route::group(['middleware' => ['auth', 'access']], function () {
 
 	/*Loan Amount*/
 	Route::get('/loan_amount/getloanamount','LoanAmountController@getloanamount');
+	Route::get('/loan_amount/{id}/deleteloanamount','LoanAmountController@destroy');
 	Route::get('/loan_amount/{id}/deductions/{deduction_id}/view','DeductionController@viewdeductions');
 	Route::patch('/loan_amount/{id}/deductions/{deduction_id}/update','DeductionController@update');
 	/*End Loan Amount*/
@@ -95,11 +97,15 @@ Route::group(['middleware' => ['auth', 'access']], function () {
 	/*Release Schedule*/
 	Route::get('/accounts/{id}/releaseschedule', 'ReleaseScheduleController@PaymentSchedule');
 
-	// SOA
+    /*SOA */
 	Route::get('soa', 'SOAController@index');
 	Route::get('soa/getclient', 'SOAController@getclient');
 	Route::get('soa/getaccounts', 'SOAController@getaccounts');
 	Route::post('soa/generatesoa', 'SOAController@generatesoa');
+
+    /*Industry */
+    Route::get('industry/get_all', 'IndustryController@get_all');
+    Route::get('industry/{id}/delete_industry', 'IndustryController@destroy');
 
 	/*Resource routes goes here*/
 	Route::resource('clients', 'ClientController');
@@ -121,7 +127,7 @@ Route::group(['middleware' => ['auth', 'access']], function () {
 	Route::resource('payment','PaymentController');
 	Route::resource('penalties','PenaltyController');
 	Route::resource('chequemanagement','ChequeManagementController');
-
+    Route::resource('industry', 'IndustryController');
 	/*End resource routes*/
 });
 

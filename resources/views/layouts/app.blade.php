@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="{{asset('template_styles/css/owl.carousel.min.css')}}">
     <link rel="stylesheet" href="{{asset('template_styles/css/slicknav.min.css')}}">
     <!-- amchart css -->
-    <link rel="stylesheet" href="{{asset('template_styles/css/export.css')}}" type="text/css" media="all" /> 
+    <link rel="stylesheet" href="{{asset('template_styles/css/export.css')}}" type="text/css" media="all" />
     @yield('custom_css')
     <!-- others css -->
     <link rel="stylesheet" href="{{asset('template_styles/css/typography.css')}}">
@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="{{ asset('css/bootstrap-select.min.css') }}">
     <!-- modernizr css -->
     <script src="{{asset('template_styles/js/vendor/modernizr-2.8.3.min.js')}}"></script>
-   
+
 </head>
 <body>
     <div id="preloader">
@@ -47,11 +47,11 @@
                 @include('partials.alert')
                 @yield('content')
             </div>
-           
+
             </div>
 
         </div>
-        
+
         <!-- main content area end -->
         <!-- footer area start-->
         <footer>
@@ -239,7 +239,7 @@
             </div>
         </div>
     </div>
-    
+
     <script src="{{asset('js/jquery.js')}}"></script>
     <script src="{{asset('template_styles/js/popper.min.js')}}"></script>
     <script src="{{asset('template_styles/js/bootstrap.min.js')}}"></script>
@@ -256,6 +256,8 @@
     <script src="{{asset('template_styles/js/scripts.js')}}"></script>
     <script src="{{asset('js/bootstrap-select.min.js')}}"></script>
     <script src="{{asset('js/csrf_token.js')}}"></script>
+    <script src="{{asset('js/accounting.js')}}"></script>
+    <script src="{{asset('js/constants/useConvertMoney.js')}}"></script>
     @yield('custom_js')
 </body>
 </html>

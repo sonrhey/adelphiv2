@@ -332,7 +332,9 @@ class AccountController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Account::find($id)->delete();
+
+        return back()->with('message', 'Record Successfully Deleted!');
     }
     private function accountNumber($account_id, $loan_type_id){
         if ($loan_type_id == 1) {
@@ -367,7 +369,7 @@ class AccountController extends Controller
         $accounts = Account::with('client', 'branch', 'status', 'loan_type');
         return DataTables::of($accounts)
         ->addColumn('action', function ($accounts){
-            return '<a class="btn btn-rounded btn-info btn-xs" href="accounts/'.$accounts->id.'/edit"><i class="fa fa-edit"></i>Edit</a>';
+            return '<a class="btn btn-rounded btn-info btn-xs" href="accounts/'.$accounts->id.'/edit"><i class="fa fa-edit"></i>Edit</a><a class="btn btn-rounded btn-danger btn-xs" href="accounts/'.$accounts->id.'/deleteaccount"><i class="fa fa-edit"></i>Delete</a>';
         })
         ->make(true);
     }

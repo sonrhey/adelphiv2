@@ -88,6 +88,6 @@ class AccountIdentificationController extends Controller
     public function destroy($account_id, $identification_id)
     {
        AccountIdentification::find($identification_id)->delete();
-       return redirect()->back();
+       return back()->with('message', 'Record Successfully Deleted!');
     }
 }
