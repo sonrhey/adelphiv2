@@ -3,7 +3,6 @@
     <div class="custom-control custom-checkbox">
     @foreach($useraccess as $ua)
         @if($ua->module_id == $module->id && $ua->grant == 1)
-        {{ $ua->id }}
             <input type="checkbox" class="custom-control-input" name="isParent" id="isParent{{$module->id}}" value="{{ $module->id }}" checked>
             <label class="custom-control-label" for="isParent{{$module->id}}">{{ $module->name }}</label>
         @elseif($ua->module_id == $module->id && $ua->grant == 0)
