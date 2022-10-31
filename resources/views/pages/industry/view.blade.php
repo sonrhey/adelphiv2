@@ -16,6 +16,11 @@
                         <input class="form-control" type="text" name="name" placeholder="Enter Industry name" value="{{ $industry->name }}" readonly>
                     </div>
                 </div>
+                <div class="form-row align-items-center">
+                    <div class="col-xs-2 my-1">
+                        <a class="btn btn-danger float-right" href="{{ URL::to('identification_list') }}">Back</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
