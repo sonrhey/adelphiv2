@@ -82,6 +82,21 @@ class UserAccessTableSeeder extends Seeder
                 'user_type_id' => 1,
                 'grant' => 1,
             ],
+            [
+                'module_id' => 15,
+                'user_type_id' => 1,
+                'grant' => 1,
+            ],
+            [
+                'module_id' => 16,
+                'user_type_id' => 1,
+                'grant' => 1,
+            ],
+            [
+                'module_id' => 17,
+                'user_type_id' => 1,
+                'grant' => 1,
+            ],
         ]);
     }
 }

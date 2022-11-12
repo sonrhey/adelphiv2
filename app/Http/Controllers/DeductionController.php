@@ -108,7 +108,7 @@ class DeductionController extends Controller
         }catch(\Exception $e){
             // return redirect()->back()->with('error_message', 'Please check your inputs!');
             throw $e;
-        }        
+        }
         //
     }
 

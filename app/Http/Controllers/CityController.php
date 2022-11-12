@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\Datatables;
 use Carbon\Carbon;
 use App\City;
+use App\DeductionLocation;
 use Auth;
 class CityController extends Controller
 {
@@ -43,6 +44,10 @@ class CityController extends Controller
         $city = new City;
         $city->name = $request->name;
         $city->save();
+
+        $deduction_location = new DeductionLocation();
+        $deduction_location->location_name = $request->name;
+        $deduction_location->save();
 
         return redirect('/cities/'.$city->id.'/edit')->with('message','New City has been successfully added');
     }
@@ -105,7 +110,7 @@ class CityController extends Controller
         return Datatables::of($city)
             ->addColumn('action',function($city){
                 return '<a class="btn btn-rounded btn-success btn-xs" href="cities/'.$city->id.'"><i class="fa fa-eye"></i>View</a><a class="btn btn-rounded btn-info btn-xs" href="cities/'.$city->id.'/edit"><i class="fa fa-edit"></i>Edit</a> <a class="btn btn-rounded btn-danger btn-xs" href="#" id="delete" data-id="'.$city->id.'" data-name="'.$city->name.'"><i class="fa fa-trash"></i>Delete</a>';
-                // 
+                //
             })->make(true);
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
-    protected $table = 'clients'; 
+    protected $table = 'clients';
     protected $fillable = [
         'first_name','middle_name','last_name','suffix','birth_date','civil_status_id','gender','nationality_id','email_address','mobile_number','landline_number','address_1','city1_id','barangay1_id','length_stay_1','address_2','city2_id','barangay2_id','length_stay_2','status','added_by','updated_by'
     ];
@@ -27,7 +27,7 @@ class Client extends Model
     	return $this->belongsTo(City::class,'city1_id');
     }
     public function city2 (){
-    	return $this->belongsTo(Barangay::class,'city2_id');
+    	return $this->belongsTo(City::class,'city2_id');
     }
     public function cheque(){
         return $this->hasMany(ChequeManagement::class, 'client_id');

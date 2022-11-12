@@ -14,7 +14,7 @@ class IndustryUserAccessSeeder extends Seeder
     {
         UserAccess::insert([
             [
-                'module_id' => 15,
+                'module_id' => 18,
                 'user_type_id' => 1,
                 'grant' => 1,
             ],

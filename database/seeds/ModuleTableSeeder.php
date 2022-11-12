@@ -140,6 +140,33 @@ class ModuleTableSeeder extends Seeder
                 'sequence' => 9,
                 'visible' => 1,
             ],
+            [
+                'module_name' => 'Reports',
+                'has_sub' => 1,
+                'routes' => 'reports',
+                'parent' => 0,
+                'icon' => NULL,
+                'sequence' => 10,
+                'visible' => 1,
+            ],
+            [
+                'module_name' => 'Ledger',
+                'has_sub' => 0,
+                'routes' => 'ledger',
+                'parent' => 15,
+                'icon' => NULL,
+                'sequence' => 9,
+                'visible' => 1,
+            ],
+            [
+                'module_name' => 'SOA',
+                'has_sub' => 0,
+                'routes' => 'soa',
+                'parent' => 15,
+                'icon' => NULL,
+                'sequence' => 9,
+                'visible' => 1,
+            ],
         ]);
     }
 }
