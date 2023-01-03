@@ -14,13 +14,14 @@ var check_loan_cycle = function(){
 $(document).on('submit', '#renew', function(e){
     e.preventDefault();
     $('#preloader').fadeIn();
+    $('#renewal-fee').modal('hide');
     $.ajax({
         url: $(this).attr("action"),
         method: $(this).attr("method"),
         success: function(response){
             $('#preloader').fadeOut();
             localStorage.removeItem("loan_cycle");
-            location.reload();
+            ar.ajax.reload();
         }
     });
 });
@@ -28,7 +29,7 @@ $(document).on('submit', '#renew', function(e){
 $(document).on('submit', '.payloannow',function(e){
     e.preventDefault();
     var flag = false;
-    
+
     switch(paymentType){
         case "CHQ":
             if(chequeId == 0){
@@ -52,7 +53,6 @@ $(document).on('submit', '.payloannow',function(e){
             url: "pay-loan",
             data: {cashId: cashId, paymentValue: paymentValue, chequeId:chequeId, loanScheduleId: loanScheduleId, paymentType: paymentType},
             success: function(response){
-                console.log(response.loan_cycle);
                 localStorage.setItem("loan_cycle", response.loan_cycle);
                 $('#preloader').fadeOut();
                 if(response.loan_cycle == 0){
@@ -66,7 +66,10 @@ $(document).on('submit', '.payloannow',function(e){
                 }
 
                 $("#succesPayment, #fullypaid, #renewal-fee").on("hidden.bs.modal", function () {
-                    location.reload();
+                    ar.ajax.reload();
+                    if (response.loan_cycle === 3) {
+                        location.reload();
+                    };
                 });
             },
             error: function(error){
@@ -90,7 +93,6 @@ $(document).on('change', '[name="payment_type"]', function(){
     var ammortizationId = $(this).find(' option:selected').data('ammortization-id');
     switch(paymentType){
         case 'CSH':
-            $(this).hide();
             $('.cash-display'+ammortizationId+'').fadeIn();
             $('.cheque-display'+ammortizationId+'').hide();
             break;

@@ -63,19 +63,7 @@
             </div>
         </div>
     </div>
-    {{-- <div class="card mb-3 generated-soa">
-        <div class="card-body">
-            <div class="container">
-                <div class="form-group">
-                    <button class="btn btn-primary" onclick="saveSOA()">Save as Excel</button>
-                </div>
-                <div class="container">
-                    <div class="soa">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> --}}
+    <div id="preloader" style="display: none"><div class="loader"></div></div>
     @endsection
     @section('custom_js')
     <script src="{{asset('js/jquery.table2excel.js')}}"></script>

@@ -31,8 +31,7 @@
             <div class="card-body">
                 <div class="container">
                     <h5 class="mb-5">Payment Schedules</h5>
-                    <!-- <button class="btn btn-primary mb-4 pull-right">Proceed</button> -->
-                    <table class="table table-bordered datatables" id="tbl-payments">
+                    <table class="table table-bordered" id="tbl-payments">
                         <thead>
                             <tr>
                                 <th>Due Date</th>
@@ -44,7 +43,7 @@
                                 <th>Status</th>
                                 <th>(&#8369;) Payment</th>
                             </tr>
-                        </thead>    
+                        </thead>
                     </table>
                 </div>
             </div>
@@ -68,10 +67,7 @@
         <!---->
     @endsection
 @section('custom_css')
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables/jquery.dataTables.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables/dataTables.bootstrap4.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables/responsive.bootstrap.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables/responsive.jqueryui.min.css') }}">
 @endsection
 @section('custom_js')
     <!-- Start datatable js -->

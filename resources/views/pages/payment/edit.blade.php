@@ -1,4 +1,11 @@
 @extends('layouts.app')
+@section('custom_css')
+    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables/jquery.dataTables.css') }}"> --}}
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables/dataTables.bootstrap4.min.css') }}">
+    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables/responsive.bootstrap.min.css') }}"> --}}
+    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables/responsive.jqueryui.min.css') }}"> --}}
+    <link rel="stylesheet" href="{{asset('css/custom.css')}}">
+@endsection
 @section('title', 'Loan Payment')
     @section('content')
         <div class="card mb-3">
@@ -12,8 +19,8 @@
                         <div class="col-md-9">
                             <?php $total = 0; ?>
                             @foreach ($account->client->cheque as $cheque)
-                                <?php 
-                                $total += $cheque->cheque_value; 
+                                <?php
+                                $total += $cheque->cheque_value;
                                 ?>
                             @endforeach
                             <?php
@@ -58,7 +65,7 @@
             <div class="card-body">
                 <div class="container">
                     <h5 class="mb-5">Payment Schedules</h5>
-                    <table class="table table-bordered datatables" id="tbl-payments">
+                    <table class="table table-bordered" id="tbl-payments">
                         <thead>
                             <tr>
                                 <th>Due Date</th>
@@ -70,7 +77,7 @@
                                 <th style="width: 0px !important;">Status</th>
                                 <th>(&#8369;) Payment</th>
                             </tr>
-                        </thead>    
+                        </thead>
                     </table>
                 </div>
             </div>
@@ -99,7 +106,7 @@
                     </div>
                 </div>
             </div>
-        </div>   
+        </div>
         <!--renewal modal-->
         <div class="modal fade" id="renewal-fee">
             <div class="modal-dialog modal-md">
@@ -123,7 +130,7 @@
                     </div>
                 </div>
             </div>
-        </div>   
+        </div>
         <!--fullypaid modal-->
         <div class="modal fade" id="fullypaid">
             <div class="modal-dialog modal-sm">
@@ -140,7 +147,7 @@
                     </div>
                 </div>
             </div>
-        </div>   
+        </div>
         <!--success modal-->
         <div class="modal fade" id="succesPayment">
             <div class="modal-dialog modal-sm">
@@ -157,7 +164,7 @@
                     </div>
                 </div>
             </div>
-        </div>       
+        </div>
         <!--error modal-->
         <div class="modal fade" id="errorPayment">
             <div class="modal-dialog modal-sm">
@@ -188,7 +195,7 @@
                         </div>
                         <div class="modal-footer">
                             <div class="row">
-                                <div class="col-md-6">                                    
+                                <div class="col-md-6">
                                 <form method="GET" action="/accounts/{{$account->id}}/close-account">
                                     <button class="btn btn-primary" type="submit" onclick="localstorage.removeItem('loan_cycle')">YES</button>
                                 </form>
@@ -201,7 +208,7 @@
                     </div>
                 </div>
             </div>
-        </div> 
+        </div>
         <!--payout modal-->
         <div class="modal fade" id="payout-modal">
             <div class="modal-dialog modal-md">
@@ -221,7 +228,7 @@
                             </div>
                             <div class="modal-footer">
                                 <div class="row">
-                                    <div class="col-md-6">                                    
+                                    <div class="col-md-6">
                                         <button class="btn btn-primary" type="submit">OK</button>
                                     </div>
                                 </div>
@@ -230,7 +237,7 @@
                     </div>
                 </div>
             </div>
-        </div> 
+        </div>
         <!--revert modal-->
         <div class="modal fade" id="revert-modal">
             <div class="modal-dialog modal-md">
@@ -249,10 +256,10 @@
                             </div>
                             <div class="modal-footer">
                                 <div class="row">
-                                    <div class="col-md-6">                                    
+                                    <div class="col-md-6">
                                         <button class="btn btn-primary" type="submit" >Yes</button>
                                     </div>
-                                    <div class="col-md-6">                                    
+                                    <div class="col-md-6">
                                         <button class="btn btn-danger" type="button" data-dismiss="modal">No</button>
                                     </div>
                                 </div>
@@ -261,15 +268,9 @@
                     </div>
                 </div>
             </div>
-        </div> 
+        </div>
         <div id="preloader" style="display: none"><div class="loader"></div></div>
     @endsection
-@section('custom_css')
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables/jquery.dataTables.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables/dataTables.bootstrap4.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables/responsive.bootstrap.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/datatables/responsive.jqueryui.min.css') }}">
-@endsection
 @section('custom_js')
     <!-- Start datatable js -->
     <script src="{{ asset('js/datatables/jquery.dataTables.min.js') }}"></script>
@@ -277,6 +278,7 @@
     <script>
         var ar = $('#tbl-payments').DataTable({
         pageLength: 50,
+        searching: false,
 	    processing: true,
 	    serverSide: true,
 	    ajax: '/payment/{{$account->id}}/pay-schedules',

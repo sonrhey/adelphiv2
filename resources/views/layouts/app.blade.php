@@ -22,7 +22,6 @@
     <link rel="stylesheet" href="{{asset('template_styles/css/slicknav.min.css')}}">
     <!-- amchart css -->
     <link rel="stylesheet" href="{{asset('template_styles/css/export.css')}}" type="text/css" media="all" />
-    @yield('custom_css')
     <!-- others css -->
     <link rel="stylesheet" href="{{asset('template_styles/css/typography.css')}}">
     <link rel="stylesheet" href="{{asset('template_styles/css/default-css.css')}}">
@@ -30,6 +29,7 @@
     <link rel="stylesheet" href="{{asset('template_styles/css/responsive.css')}}">
     <link rel="stylesheet" href="{{ asset('css/bootstrap-select.min.css') }}">
     <link rel="stylesheet" href="{{ asset('loading-plugin/loading-overlay.jquery.css') }}">
+    @yield('custom_css')
     <!-- modernizr css -->
     <script src="{{asset('template_styles/js/vendor/modernizr-2.8.3.min.js')}}"></script>
 

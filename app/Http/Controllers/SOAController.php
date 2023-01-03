@@ -98,7 +98,7 @@ class SOAController extends Controller
             </div>
         ';
         $html .= '
-            <table class="table table-bordered">  
+            <table class="table table-bordered">
                 <tr></tr>
                 <tr></tr>
                 <thead>
@@ -149,7 +149,7 @@ class SOAController extends Controller
                         ';
                 }
             }
-            
+
             if($rowspan == 1){
                 $html .= '<tr><td>'.$ammort->due_date.'</td>';
                 $lph = $loanpaymenthistory->first();

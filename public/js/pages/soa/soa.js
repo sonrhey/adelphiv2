@@ -24,7 +24,9 @@ function getAccounts(client_id){
         url: 'soa/getaccounts',
         data: {client_id: client_id},
         success: function(response){
+            $('[name="account_number"]').empty();
             var length = response.length;
+            $('[name="account_number"]').append('<option selected disabled>--Select One--</option>');
             for(var a=0; a<length; a++){
                 $('[name="account_number"]').append('<option data-tokens="'+response[a].id+'" value="'+response[a].id+'">'+response[a].account_number+'</option>');
             }
@@ -35,16 +37,18 @@ function getAccounts(client_id){
 
 $('#generatesoa').on('submit', function(e){
     e.preventDefault();
+    $('#preloader').fadeIn();
     $.ajax({
         type: $(this).attr("method"),
         url: $(this).attr("action"),
         data: $(this).serialize(),
         success: function(response){
+            $('#preloader').fadeOut();
             $('#modal-soa').modal("show");
             $('.soa').html(response);
         },
         error: function(err){
-            console.log(err);
+            $('#preloader').fadeOut();
             $('#errorPayment').modal("show");
         }
     });

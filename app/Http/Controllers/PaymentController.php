@@ -147,7 +147,7 @@ class PaymentController extends Controller
 
                     $cash = $c->account->client->cash->first();
                     $cash = '<div class="cash-display'.$c->id.'" style="display: none"><form class="payloannow"><input type="number" step="any" class="form-control payment-input" data-loan-schedule-id="'.$c->id.'" data-cash-id="'.@$cash->id.'" value="'.@$cash->amount.'"><div class="mb-2"></div><button class="btn btn-primary btn-block" type="submit">Pay</button></form></div>';
-                    
+
                     $cheque = '<div class="row cheque-display'.$c->id.'" style="margin: auto; display: none;"><div class="col-xs-12" style="width: 100%"><select class="form-control selectpicker" data-live-search="true" data-style="btn-user btn-bordered" name="bank_id" required><option selected disabled>Select a Cheque</option>'.$select.'
                     </select></div><div class="col-xs-12 mt-2"><form class="payloannow"><div class="row"><div class="col-sm-9" style="padding-right: 0; max-width: 60%"><input type="text" class="form-control payment-input" data-loan-schedule-id="'.$c->id.'" id="payment'.$c->id.'" required></div><div class="col-sm-3" style="padding-right: 0;"><button class="btn btn-primary" type="submit">Pay</button></div></div></form></div></div>';
 
@@ -198,7 +198,7 @@ class PaymentController extends Controller
                 $cheque->save();
                 $cheque_history = $this->chequeHistory($request->chequeId, $amount, $id, $loanScheduleId, $chequeRemainingBalance);
             }else if($request->paymentType === "CSH"){
-                $cash = CashManagement::updateOrCreate(['id' => $request->cashId], 
+                $cash = CashManagement::updateOrCreate(['id' => $request->cashId],
                 [
                 'client_id' => $loanType->client_id,
                 'amount' => $chequeRemainingBalance
@@ -344,7 +344,7 @@ class PaymentController extends Controller
             while($i<$month_cycle){
                 $i++;
                 $date = Carbon::now();
-                $monthly_dates = $this->get_monthly_dates($date, $i); 
+                $monthly_dates = $this->get_monthly_dates($date, $i);
                 $ammortization = $this->save_ammortization($account->id, $monthly_dates, $monthly_payment, $interest_value, $approvedamount);
             }
 
@@ -353,7 +353,7 @@ class PaymentController extends Controller
             $loan_tracker_insertOrUpdate->account_id = $account->id;
             $loan_tracker_insertOrUpdate->month_cycle = $month_payment_cycle;
             $loan_tracker_insertOrUpdate->cycle_counter = $i;
-            $loan_tracker_insertOrUpdate->save(); 
+            $loan_tracker_insertOrUpdate->save();
 
             //loan cycle
             $loan_cycle_insert = new LoanCycle();
@@ -412,7 +412,7 @@ class PaymentController extends Controller
             while($i<$month_cycle){
                 $i++;
                 $date = Carbon::now();
-                $monthly_dates = $this->get_monthly_dates($date, $i); 
+                $monthly_dates = $this->get_monthly_dates($date, $i);
                 $ammortization = $this->save_ammortization($account->id, $monthly_dates, $interest_value, $interest_value, $approvedamount);
             }
 
@@ -421,7 +421,7 @@ class PaymentController extends Controller
             $loan_tracker_insertOrUpdate->account_id = $account->id;
             $loan_tracker_insertOrUpdate->month_cycle = $month_payment_cycle;
             $loan_tracker_insertOrUpdate->cycle_counter = $i;
-            $loan_tracker_insertOrUpdate->save(); 
+            $loan_tracker_insertOrUpdate->save();
 
             //loan cycle
             $loan_cycle_insert = new LoanCycle();
@@ -458,7 +458,7 @@ class PaymentController extends Controller
             $ammortization->ammortization_schedule_status_id = 1;
             $ammortization->save();
         }catch(\Exception $ex){
-            throw $e;
+            throw $ex;
         }
     }
 
@@ -515,7 +515,7 @@ class PaymentController extends Controller
 
         $loan_amount = LoanAmount::firstOrNew(['amount' => $new_amount]);
         $loan_amount->amount = $new_amount;
-        $loan_amount->save(); 
+        $loan_amount->save();
 
         $account = Account::find($id);
         $account->account_status_id = 7;
@@ -533,11 +533,11 @@ class PaymentController extends Controller
         $account_number = $this->accountNumber($reverted_account->id, 2);
         $update = Account::find($reverted_account->id);
         $update->account_number = $account_number;
-        $update->save();  
+        $update->save();
 
         $calculate_ammortization = $this->calculateammortization_interestonly($account_number);
 
-        DB::commit();      
+        DB::commit();
 
         return redirect('/payment');
         }catch(\Exception $ex){
@@ -572,7 +572,7 @@ class PaymentController extends Controller
             $account_number = $prefix.'-'.$account_id;
        }
 
-       
+
         return $account_number;
     }
 
