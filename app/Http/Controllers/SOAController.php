@@ -181,6 +181,21 @@ class SOAController extends Controller
                     </tr>
                 ';
             }
+
+            if ($rowspan == 0) {
+                $html .= '<tr><td>'.$ammort->due_date.'</td>';
+                $html .= '
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>'.$ammort->balance.'</td>
+                    </tr>
+                ';
+            }
         }
         $html .= '</table>';
         return $html;
