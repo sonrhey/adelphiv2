@@ -119,7 +119,7 @@ class ClientController extends Controller
         $clients = Client::all();
         return DataTables::of($clients)
         ->addColumn('action', function ($clients){
-            return '<a class="btn btn-rounded btn-success btn-xs" href="clients/'.$clients->id.'/view"><i class="fa fa-view"></i>View</a><a class="btn btn-rounded btn-info btn-xs" href="clients/'.$clients->id.'/edit"><i class="fa fa-edit"></i>Edit</a><a class="btn btn-rounded btn-danger btn-xs" href="clients/delete/'.$clients->id.'" id="delete" data-id="'.$clients->id.'"><i class="fa fa-delete"></i>Delete</a>';
+            return '<a class="btn btn-rounded btn-success btn-xs" href="clients/'.$clients->id.'/view"><i class="fa fa-view"></i>View</a><a class="btn btn-rounded btn-info btn-xs" href="clients/'.$clients->id.'/edit"><i class="fa fa-edit"></i>Edit</a>';
         })
         ->make(true);
     }
